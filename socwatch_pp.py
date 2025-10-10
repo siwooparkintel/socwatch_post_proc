@@ -530,7 +530,7 @@ class SocWatchProcessor:
                 return False
                 
         except subprocess.TimeoutExpired:
-            print(f"   ❌ Timeout (>5 minutes)")
+            print(f"   ❌ Timeout (>30 minutes)")
             self.failed_files.append((collection, "Timeout"))
             return False
         except Exception as e:
