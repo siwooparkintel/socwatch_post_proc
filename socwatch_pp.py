@@ -5,14 +5,17 @@ SocWatch Post-Processor (socwatch_pp)
 A simple tool to batch process SocWatch .etl files using socwatch.exe.
 
 Features:
-- User-selectable SocWatch.exe versions from D:\socwatch
+- Auto-detects SocWatch installation directory or uses SOCWATCH_DIR environment variable
+- User-selectable SocWatch.exe versions from installation directory
 - Recursive folder scanning for .etl files (SocWatch 3 or 4)
 - Automatic processing with file prefix as input parameter
 - Output to same folder as source files
 - Comprehensive processing report
 
 Usage:
-    python socwatch_pp.py <input_folder>
+    python socwatch_pp.py [options] [<input_folder>]
+    
+Set SOCWATCH_DIR environment variable or use --socwatch-dir to specify installation path.
 """
 
 import os
@@ -20,7 +23,7 @@ import sys
 import subprocess
 import glob
 from pathlib import Path
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 import time
 import tkinter as tk
 from tkinter import filedialog, messagebox
@@ -29,15 +32,16 @@ from tkinter import filedialog, messagebox
 class SocWatchProcessor:
     """Main class for SocWatch post-processing operations."""
     
-    def __init__(self, socwatch_base_dir: str = r"D:\socwatch", use_gui: bool = True):
+    def __init__(self, socwatch_base_dir: Optional[str] = None, use_gui: bool = True):
         """
         Initialize SocWatch processor.
         
         Args:
-            socwatch_base_dir: Base directory containing SocWatch versions
+            socwatch_base_dir: Base directory containing SocWatch versions. 
+                              If None, will auto-detect or use environment variable.
             use_gui: Whether to use GUI for folder selection and dialogs
         """
-        self.socwatch_base_dir = Path(socwatch_base_dir)
+        self.socwatch_base_dir = self._resolve_socwatch_dir(socwatch_base_dir)
         self.available_versions = []
         self.selected_version = None
         self.processed_files = []
@@ -45,6 +49,64 @@ class SocWatchProcessor:
         self.start_time = None
         self.use_gui = use_gui
         self.root = None
+        
+    def _resolve_socwatch_dir(self, socwatch_base_dir: Optional[str]) -> Path:
+        """
+        Resolve SocWatch base directory from various sources.
+        
+        Priority order:
+        1. Explicitly provided socwatch_base_dir parameter
+        2. SOCWATCH_DIR environment variable
+        3. Auto-detection in common locations
+        4. Default fallback
+        
+        Args:
+            socwatch_base_dir: Explicitly provided directory path
+            
+        Returns:
+            Path object for the SocWatch base directory
+        """
+        # 1. Use explicitly provided directory
+        if socwatch_base_dir:
+            path = Path(socwatch_base_dir)
+            if path.exists():
+                print(f"✅ Using provided SocWatch directory: {path}")
+                return path
+            else:
+                print(f"⚠️  Provided SocWatch directory doesn't exist: {path}")
+        
+        # 2. Check environment variable
+        env_dir = os.environ.get('SOCWATCH_DIR')
+        if env_dir:
+            path = Path(env_dir)
+            if path.exists():
+                print(f"✅ Using SocWatch directory from SOCWATCH_DIR environment variable: {path}")
+                return path
+            else:
+                print(f"⚠️  SOCWATCH_DIR environment variable points to non-existent directory: {path}")
+        
+        # 3. Auto-detection in common locations
+        common_paths = [
+            Path("D:/socwatch"),
+            Path("C:/socwatch"),
+            Path("D:/SocWatch"),
+            Path("C:/SocWatch"),
+            Path("D:/Intel/SocWatch"),
+            Path("C:/Intel/SocWatch"),
+            Path("C:/Program Files/Intel/SocWatch"),
+            Path("C:/Program Files (x86)/Intel/SocWatch"),
+        ]
+        
+        for path in common_paths:
+            if path.exists() and (path / "socwatch.exe").exists():
+                print(f"✅ Auto-detected SocWatch directory: {path}")
+                return path
+        
+        # 4. Default fallback (original hardcoded path)
+        default_path = Path("D:/socwatch")
+        print(f"⚠️  Using default SocWatch directory (may not exist): {default_path}")
+        print(f"💡 Tip: Set SOCWATCH_DIR environment variable or use --socwatch-dir argument")
+        return default_path
         
     def discover_socwatch_versions(self) -> List[Path]:
         """
@@ -429,19 +491,29 @@ class SocWatchProcessor:
         print(f"   🔧 SocWatch executable: {self.selected_version}")
         print(f"   📝 Input full path: {full_input_path}")
         print(f"   📤 Output directory: {output_dir}")
-        print(f"   ⚡ Full command: {' '.join(cmd)}")
+        print(f"   ⚡ Full command:")
+        print(f"      {self.selected_version}")
+        print(f"      -i {full_input_path}")
+        print(f"      -o {output_dir}")
         
+        # Validate command before execution
+        if not Path(self.selected_version).exists():
+            print(f"   ❌ Error: SocWatch executable not found: {self.selected_version}")
+            self.failed_files.append((collection, f"SocWatch executable not found: {self.selected_version}"))
+            return False
+            
         try:
             # Change to the collection directory where .etl files are located
             original_cwd = os.getcwd()
             os.chdir(collection_dir)
             
-            # Run socwatch.exe
+            # Run socwatch.exe with extended timeout for large files
+            print(f"   🚀 Starting SocWatch processing (may take several minutes for large files)...")
             result = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=300  # 5 minute timeout
+                timeout=1800  # 30 minute timeout for large files
             )
             
             # Restore original directory
@@ -548,18 +620,25 @@ def main():
     print("🔧 SocWatch Post-Processor (socwatch_pp)")
     print("=" * 40)
     
-    # Determine if we should use GUI mode
+    # Parse command line arguments
     use_gui = True
     input_folder = None
+    socwatch_dir = None
     
-    # Check command line arguments
-    if len(sys.argv) == 1:
-        # No arguments - use GUI mode
-        print("🖥️  GUI Mode: Select folder using dialog")
-        use_gui = True
-    elif len(sys.argv) == 2:
-        if sys.argv[1] in ['-h', '--help', 'help']:
+    args = sys.argv[1:]  # Remove script name
+    i = 0
+    
+    while i < len(args):
+        arg = args[i]
+        
+        if arg in ['-h', '--help', 'help']:
             print("Usage:")
+            print("  python socwatch_pp.py [options] [<input_folder>]")
+            print("\nOptions:")
+            print("  -h, --help                    Show this help message")
+            print("  --cli                         Force CLI mode (no GUI dialogs)")
+            print("  --socwatch-dir <path>         Specify SocWatch installation directory")
+            print("\nModes:")
             print("  python socwatch_pp.py                    # GUI mode - select folder with dialog")
             print("  python socwatch_pp.py <input_folder>     # CLI mode - use specified folder")
             print("  python socwatch_pp.py --cli <folder>     # Force CLI mode")
@@ -567,29 +646,47 @@ def main():
             print("  python socwatch_pp.py                              # Open folder selection dialog")
             print("  python socwatch_pp.py C:\\data\\socwatch_traces      # Use specified folder")
             print("  python socwatch_pp.py --cli C:\\data\\traces         # Use CLI mode")
+            print("  python socwatch_pp.py --socwatch-dir D:\\MySocWatch C:\\data  # Use custom SocWatch dir")
+            print("\nEnvironment Variables:")
+            print("  SOCWATCH_DIR                  SocWatch installation directory")
             return
-        elif sys.argv[1] == '--cli':
-            print("❌ --cli flag requires a folder path")
-            print("Usage: python socwatch_pp.py --cli <input_folder>")
-            sys.exit(1)
-        else:
-            # CLI mode with folder argument
-            input_folder = Path(sys.argv[1])
+            
+        elif arg == '--cli':
             use_gui = False
-            print("💻 CLI Mode: Using specified folder")
-    elif len(sys.argv) == 3 and sys.argv[1] == '--cli':
-        # Force CLI mode
-        input_folder = Path(sys.argv[2])
-        use_gui = False
-        print("💻 CLI Mode (forced): Using specified folder")
-    else:
-        print("❌ Invalid arguments")
-        print("Usage: python socwatch_pp.py [<input_folder>] [--cli <input_folder>]")
-        print("Run 'python socwatch_pp.py --help' for more information")
-        sys.exit(1)
+            print("💻 CLI Mode (forced)")
+            
+        elif arg == '--socwatch-dir':
+            if i + 1 >= len(args):
+                print("❌ --socwatch-dir requires a directory path")
+                sys.exit(1)
+            socwatch_dir = args[i + 1]
+            i += 1  # Skip next argument as it's the directory path
+            
+        elif arg.startswith('--'):
+            print(f"❌ Unknown option: {arg}")
+            print("Run 'python socwatch_pp.py --help' for usage information")
+            sys.exit(1)
+            
+        else:
+            # Assume it's the input folder
+            if input_folder is None:
+                input_folder = Path(arg)
+                use_gui = False
+                print("💻 CLI Mode: Using specified folder")
+            else:
+                print(f"❌ Unexpected argument: {arg}")
+                print("Run 'python socwatch_pp.py --help' for usage information")
+                sys.exit(1)
+        
+        i += 1
+    
+    # If no arguments, use GUI mode
+    if len(sys.argv) == 1:
+        print("🖥️  GUI Mode: Select folder using dialog")
+        use_gui = True
     
     # Initialize processor
-    processor = SocWatchProcessor(use_gui=use_gui)
+    processor = SocWatchProcessor(socwatch_base_dir=socwatch_dir, use_gui=use_gui)
     
     # Get input folder
     if use_gui and input_folder is None:

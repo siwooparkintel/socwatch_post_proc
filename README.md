@@ -4,18 +4,19 @@ A simple Python tool for batch processing SocWatch .etl files using socwatch.exe
 
 ## Features
 
-- �️ **GUI Mode** - Easy folder selection with graphical interface
+- 🖥️ **GUI Mode** - Easy folder selection with graphical interface
 - 💻 **CLI Mode** - Command-line interface for automation/scripting
-- �🔍 **Auto-discovery** of SocWatch versions from `D:\socwatch`
+- 🔍 **Auto-discovery** of SocWatch installations with flexible directory support
 - 📁 **Recursive scanning** for .etl files in input folders
 - 🎯 **Automated processing** using file prefixes as input parameters
 - 📊 **Comprehensive reporting** of processing results
 - ✅ **Simple single-file solution** - no external dependencies
+- 🛠️ **Flexible SocWatch location** - supports custom installation paths
 
 ## Requirements
 
 - Python 3.6 or higher
-- SocWatch installation(s) in `D:\socwatch` directory
+- SocWatch installation (auto-detected or manually specified)
 - Windows environment (uses socwatch.exe)
 
 ## Installation
@@ -53,10 +54,10 @@ python socwatch_pp.py <input_folder>
 ### Examples
 
 ```bash
-# GUI mode - opens folder selection dialog
+# GUI mode - select folder using dialog
 python socwatch_pp.py
 
-# CLI mode - process specified folder
+# CLI mode - use specified folder
 python socwatch_pp.py C:\data\socwatch_traces
 
 # CLI mode - process current directory
@@ -65,26 +66,72 @@ python socwatch_pp.py .
 # Force CLI mode (useful for scripting)
 python socwatch_pp.py --cli C:\data\socwatch_traces
 
+# Use custom SocWatch installation directory
+python socwatch_pp.py --socwatch-dir D:\MySocWatch C:\data\traces
+
+# Combine options (CLI mode with custom SocWatch directory)
+python socwatch_pp.py --cli --socwatch-dir C:\Intel\SocWatch C:\data\traces
+
 # Show help
 python socwatch_pp.py --help
 ```
 
 ## How It Works
 
-1. **Version Selection**: The tool scans `D:\socwatch` for available socwatch.exe versions and lets you choose which one to use.
+1. **SocWatch Discovery**: The tool automatically locates SocWatch installations using:
+   - Explicit `--socwatch-dir` argument
+   - `SOCWATCH_DIR` environment variable  
+   - Auto-detection in common locations (D:\socwatch, C:\Intel\SocWatch, etc.)
+   - Fallback to default D:\socwatch
 
-2. **File Discovery**: Recursively searches the input folder for all `.etl` files.
+2. **Version Selection**: Scans the SocWatch directory for available socwatch.exe versions and lets you choose which one to use.
 
-3. **Batch Processing**: For each .etl file found:
+3. **File Discovery**: Recursively searches the input folder for all `.etl` files.
+
+4. **Batch Processing**: For each .etl file found:
    - Extracts the file prefix (filename without .etl extension)
    - Runs: `socwatch.exe -i <prefix> -o <same_folder>`
    - Changes to the file's directory before processing
 
-4. **Reporting**: Provides a comprehensive report showing:
+5. **Reporting**: Provides a comprehensive report showing:
    - Total files processed
    - Success/failure counts
    - Processing time
    - Details of any failures
+
+## Configuration
+
+### SocWatch Installation Path
+
+The tool supports multiple ways to specify your SocWatch installation location:
+
+1. **Command-line argument** (highest priority):
+   ```bash
+   python socwatch_pp.py --socwatch-dir "C:\Intel\SocWatch" C:\data\traces
+   ```
+
+2. **Environment variable**:
+   ```bash
+   # Windows (PowerShell)
+   $env:SOCWATCH_DIR="C:\Intel\SocWatch"
+   python socwatch_pp.py C:\data\traces
+   
+   # Windows (Command Prompt)
+   set SOCWATCH_DIR=C:\Intel\SocWatch
+   python socwatch_pp.py C:\data\traces
+   ```
+
+3. **Auto-detection**: The tool will automatically search these common locations:
+   - `D:\socwatch`
+   - `C:\socwatch`
+   - `D:\SocWatch`
+   - `C:\SocWatch`
+   - `D:\Intel\SocWatch`
+   - `C:\Intel\SocWatch`
+   - `C:\Program Files\Intel\SocWatch`
+   - `C:\Program Files (x86)\Intel\SocWatch`
+
+4. **Default fallback**: Falls back to `D:\socwatch` if no installation is found
 
 ## SocWatch Directory Structure
 
@@ -159,7 +206,7 @@ The tool handles various error conditions:
 
 - **Missing SocWatch installations**: Clear error messages if no socwatch.exe found
 - **Invalid input folders**: Validates folder existence before processing
-- **Processing timeouts**: 5-minute timeout per file to prevent hanging
+- **Processing timeouts**: 30-minute timeout per file to prevent hanging
 - **SocWatch errors**: Captures and reports socwatch.exe error output
 - **File access issues**: Handles permission and path-related errors
 
@@ -168,11 +215,11 @@ The tool handles various error conditions:
 ### Common Issues
 
 1. **"No SocWatch installations found"**
-   - Ensure socwatch.exe exists in `D:\socwatch` or its subdirectories
+   - Ensure socwatch.exe exists in `C:\socwatch` or use `--socwatch-dir` to specify location
    - Check file permissions
 
 2. **"Processing timeout"**
-   - Some .etl files may be very large and take >5 minutes to process
+   - Some .etl files may be very large and take >30 minutes to process
    - The tool will skip these and continue with other files
 
 3. **"Permission denied"**
@@ -187,9 +234,9 @@ For more detailed output, you can modify the script to add verbose logging by un
 
 The script can be easily customized:
 
-- **Change SocWatch base directory**: Modify the `socwatch_base_dir` parameter
-- **Adjust timeout**: Change the `timeout=300` parameter in `subprocess.run()`
-- **Add more SocWatch arguments**: Extend the `cmd` list in `process_etl_file()`
+- **Change SocWatch base directory**: Use `--socwatch-dir` argument or set `SOCWATCH_DIR` environment variable
+- **Adjust timeout**: Change the `timeout=1800` parameter in `subprocess.run()` (default: 30 minutes)
+- **Add more SocWatch arguments**: Extend the `cmd` list in `process_collection()`
 
 ## License
 
