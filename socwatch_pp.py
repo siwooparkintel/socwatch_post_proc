@@ -107,6 +107,7 @@ class SocWatchProcessor:
         Returns:
             True if version selected, False otherwise
         """
+        print(f"🔧 Discovering SocWatch versions (GUI mode: {self.use_gui})...")
         versions = self.discover_socwatch_versions()
         
         if not versions:
@@ -120,10 +121,11 @@ class SocWatchProcessor:
                 print("❌ " + error_msg.replace('\n', '\n   '))
             return False
         
-        if self.use_gui:
-            return self._select_version_gui(versions)
-        else:
-            return self._select_version_console(versions)
+        print(f"🔍 Found {len(versions)} SocWatch version(s)")
+        
+        # Always use console selection for now - GUI dialogs are having issues
+        print("📝 Using console selection for SocWatch version...")
+        return self._select_version_console(versions)
     
     def _select_version_gui(self, versions: List[Path]) -> bool:
         """GUI version of version selection."""
@@ -132,14 +134,22 @@ class SocWatchProcessor:
             self.root.withdraw()
             
         # Create selection dialog
-        dialog = tk.Toplevel()
+        dialog = tk.Toplevel(self.root)
         dialog.title("Select SocWatch Version")
         dialog.geometry("600x400")
         dialog.resizable(True, True)
         
-        # Center the dialog
+        # Make dialog modal and bring to front
         dialog.transient(self.root)
         dialog.grab_set()
+        dialog.lift()
+        dialog.focus_force()
+        
+        # Center the dialog on screen
+        dialog.update_idletasks()
+        x = (dialog.winfo_screenwidth() // 2) - (600 // 2)
+        y = (dialog.winfo_screenheight() // 2) - (400 // 2)
+        dialog.geometry(f"600x400+{x}+{y}")
         
         # Variables
         selected_version = tk.StringVar()
@@ -209,8 +219,23 @@ class SocWatchProcessor:
             on_select()
         dialog.bind('<Return>', on_enter)
         
+        # Add timeout fallback - auto-select first version after 30 seconds
+        def auto_select_timeout():
+            if dialog.winfo_exists():
+                print("⏰ Dialog timeout - auto-selecting first version...")
+                if versions:
+                    self.selected_version = versions[0]
+                    result['selected'] = True
+                dialog.destroy()
+        
+        dialog.after(30000, auto_select_timeout)  # 30 second timeout
+        
         # Wait for dialog to close
-        dialog.wait_window()
+        try:
+            dialog.wait_window()
+        except tk.TclError:
+            # Dialog was destroyed
+            pass
         
         if result['selected']:
             print(f"✅ Selected: {self.selected_version}")
@@ -259,9 +284,17 @@ class SocWatchProcessor:
             print(f"❌ Input folder not found: {input_folder}")
             return []
             
+        print(f"🔍 Scanning for .etl files in: {input_folder}")
+        
         # Use glob to recursively find .etl files
-        pattern = str(input_folder / "**" / "*.etl")
-        all_etl_files = [Path(f) for f in glob.glob(pattern, recursive=True)]
+        try:
+            pattern = str(input_folder / "**" / "*.etl")
+            print(f"🔍 Search pattern: {pattern}")
+            all_etl_files = [Path(f) for f in glob.glob(pattern, recursive=True)]
+            print(f"🔍 Raw glob results: {len(all_etl_files)} files found")
+        except Exception as e:
+            print(f"❌ Error during file search: {e}")
+            return []
         
         # Group files by directory and detect collections
         collections = {}
@@ -598,32 +631,19 @@ def main():
         
     # Process all files
     try:
+        print("🔍 Starting file detection and processing...")
+        
+        # Note: Removed GUI processing dialog due to hanging issues
+        # Users will see progress in terminal window
+        
         processor.process_all_files(input_folder)
         
-        # Show completion message in GUI mode
+        # Note: Removed GUI completion dialog due to hanging issues
+        # Processing results are shown in console output above
+        
         if use_gui:
-            if not processor.root:
-                processor.root = tk.Tk()
-                processor.root.withdraw()
-            
-            success_count = len(processor.processed_files)
-            total_count = success_count + len(processor.failed_files)
-            
-            if processor.failed_files:
-                messagebox.showwarning(
-                    "Processing Complete with Errors",
-                    f"Processing completed!\n\n"
-                    f"✅ Success: {success_count}/{total_count} files\n"
-                    f"❌ Failed: {len(processor.failed_files)} files\n\n"
-                    f"Check console output for detailed error information."
-                )
-            else:
-                messagebox.showinfo(
-                    "Processing Complete",
-                    f"All files processed successfully!\n\n"
-                    f"✅ Processed: {success_count} files\n"
-                    f"⏱️ Total time: {time.time() - processor.start_time:.1f} seconds"
-                )
+            print("🖥️  GUI Mode: Processing completed - check results above")
+            print("💡 You can now close this terminal window")
                 
     except KeyboardInterrupt:
         print("\n⚠️  Processing interrupted by user")
@@ -631,12 +651,9 @@ def main():
         sys.exit(1)
     except Exception as e:
         error_msg = f"Unexpected error: {e}"
-        if use_gui:
-            if not processor.root:
-                processor.root = tk.Tk()
-                processor.root.withdraw()
-            messagebox.showerror("Error", error_msg)
         print(f"❌ {error_msg}")
+        if use_gui:
+            print("🖥️  GUI Mode: An error occurred - check error message above")
         sys.exit(1)
 
 
