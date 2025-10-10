@@ -349,35 +349,34 @@ class SocWatchProcessor:
             print(f"❌ Input folder not found: {input_folder}")
             return []
             
-        print(f"🔍 Scanning for .etl files in: {input_folder}")
+        print(f"🔍 Scanning for SocWatch session files in: {input_folder}")
         
-        # Use glob to recursively find .etl files
+        # Use glob to recursively find SocWatch session files (ending with "Session.etl")
         try:
-            pattern = str(input_folder / "**" / "*.etl")
+            pattern = str(input_folder / "**" / "*Session.etl")
             print(f"🔍 Search pattern: {pattern}")
             all_etl_files = [Path(f) for f in glob.glob(pattern, recursive=True)]
-            print(f"🔍 Raw glob results: {len(all_etl_files)} files found")
+            print(f"🔍 Raw glob results: {len(all_etl_files)} SocWatch session files found")
         except Exception as e:
             print(f"❌ Error during file search: {e}")
             return []
         
-        # Group files by directory and detect collections
+        # Group SocWatch session files by directory and detect collections
         collections = {}
         
         for etl_file in all_etl_files:
             directory = etl_file.parent
             filename = etl_file.stem
             
-            # Detect SocWatch session types
+            # Detect SocWatch session types (all files now end with "Session")
             session_types = ['_extraSession', '_hwSession', '_infoSession', '_osSession']
             base_name = filename
-            is_session_file = False
+            is_session_file = True  # All files are session files now
             
-            # Check if this is a session file and extract base name
+            # Extract base name by removing session type suffix
             for session_type in session_types:
                 if filename.endswith(session_type):
                     base_name = filename[:-len(session_type)]
-                    is_session_file = True
                     break
             
             # Group by directory and base name
@@ -414,7 +413,7 @@ class SocWatchProcessor:
             
             processing_list.append(collection_info)
         
-        print(f"🔍 Found {len(all_etl_files)} .etl files in {len(processing_list)} collection(s)")
+        print(f"🔍 Found {len(all_etl_files)} SocWatch session files in {len(processing_list)} collection(s)")
         
         # Print detailed list of found collections
         if processing_list:
@@ -441,7 +440,7 @@ class SocWatchProcessor:
                     print(f"  {i:2d}. {collection['base_name']} (Error reading details: {e})")
             print("=" * 50)
         else:
-            print("❌ No .etl files found in the specified directory and its subdirectories")
+            print("❌ No SocWatch session files (*Session.etl) found in the specified directory and its subdirectories")
             
         return processing_list
     
