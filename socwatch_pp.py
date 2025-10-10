@@ -480,9 +480,27 @@ class SocWatchProcessor:
             collection_output_dir = collection_dir / f"{base_name}_summary"
             summary_csv = collection_dir / f"{base_name}_summary.csv"
         
-        # Check if already processed
-        if summary_csv.exists():
-            print(f"   ⏭️  Skipping - already processed (found {summary_csv.name})")
+        # Check if already processed in multiple locations
+        skip_reasons = []
+        
+        # Check 1: Source directory for existing summary files
+        source_summary_csv = collection_dir / f"{base_name}_summary.csv"
+        source_summary_folder = collection_dir / f"{base_name}_summary"
+        if source_summary_csv.exists():
+            skip_reasons.append(f"source summary file: {source_summary_csv.name}")
+        elif source_summary_folder.exists() and any(source_summary_folder.glob("*_summary.csv")):
+            skip_reasons.append(f"source summary folder: {source_summary_folder.name}")
+        
+        # Check 2: Output directory (if using custom output)
+        if self.custom_output_dir and summary_csv.exists():
+            skip_reasons.append(f"output summary file: {summary_csv.name}")
+        elif not self.custom_output_dir and summary_csv.exists():
+            skip_reasons.append(f"summary file: {summary_csv.name}")
+        
+        # Skip if already processed anywhere
+        if skip_reasons:
+            reason_text = " and ".join(skip_reasons)
+            print(f"   ⏭️  Skipping - already processed (found {reason_text})")
             self.processed_files.append(collection)
             return True
         
