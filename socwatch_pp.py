@@ -25,6 +25,8 @@ import glob
 from pathlib import Path
 from typing import List, Tuple, Dict, Optional
 import time
+import datetime
+import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
@@ -49,6 +51,7 @@ class SocWatchProcessor:
         self.start_time = None
         self.use_gui = use_gui
         self.root = None
+        self.custom_output_dir = None
         
     def _resolve_socwatch_dir(self, socwatch_base_dir: Optional[str]) -> Path:
         """
@@ -461,18 +464,34 @@ class SocWatchProcessor:
         base_name = collection['base_name']
         collection_dir = collection['directory']
         
-        # Check if already processed - look for {base_name}_summary.csv
-        summary_csv = collection_dir / f"{base_name}_summary.csv"
+        # Determine output directory with unique naming
+        if self.custom_output_dir:
+            # Use custom output directory with unique collection identifier
+            # Create a unique name using the parent directory name (e.g., CataV3_000, CataV3_004, etc.)
+            collection_id = collection_dir.name  # e.g., "CataV3_000"
+            parent_folder = collection_dir.parent.name  # e.g., "CataV3_OVEP_TME_000"
+            unique_name = f"{parent_folder}_{collection_id}"  # e.g., "CataV3_OVEP_TME_000_CataV3_000"
+            
+            collection_output_dir = self.custom_output_dir / unique_name / f"{base_name}_summary"
+            summary_csv = collection_output_dir / f"{base_name}_summary.csv"
+            print(f"   📁 Unique output: {unique_name}")
+        else:
+            # Use default: same location as input files
+            collection_output_dir = collection_dir / f"{base_name}_summary"
+            summary_csv = collection_dir / f"{base_name}_summary.csv"
+        
+        # Check if already processed
         if summary_csv.exists():
-            print(f"   ⏭️  Skipping - already processed (found {base_name}_summary.csv)")
+            print(f"   ⏭️  Skipping - already processed (found {summary_csv.name})")
             self.processed_files.append(collection)
             return True
         
         # Use full path to base name for input (directory + base_name)
         full_input_path = str(collection_dir / base_name)
         
-        # Create output directory with base_name + _summary
-        output_dir = str(collection_dir / f"{base_name}_summary")
+        # Create output directory
+        output_dir = str(collection_output_dir)
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
         
         # Build socwatch command
         cmd = [
@@ -507,26 +526,59 @@ class SocWatchProcessor:
             original_cwd = os.getcwd()
             os.chdir(collection_dir)
             
-            # Run socwatch.exe with extended timeout for large files
+            # Run socwatch.exe with extended timeout and real-time output logging
             print(f"   🚀 Starting SocWatch processing (may take several minutes for large files)...")
-            result = subprocess.run(
+            print(f"   📝 SocWatch Output Log:")
+            print(f"      " + "=" * 60)
+            
+            # Start subprocess with real-time output
+            process = subprocess.Popen(
                 cmd,
-                capture_output=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
                 text=True,
-                timeout=1800  # 30 minute timeout for large files
+                bufsize=1,
+                universal_newlines=True
             )
+            
+            # Log output with timestamps in real-time
+            output_lines = []
+            try:
+                while True:
+                    output = process.stdout.readline()
+                    if output == '' and process.poll() is not None:
+                        break
+                    if output:
+                        timestamp = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Include milliseconds
+                        output_line = output.strip()
+                        output_lines.append(output_line)
+                        print(f"      [{timestamp}] {output_line}")
+                
+                # Wait for process to complete with timeout
+                try:
+                    return_code = process.wait(timeout=1800)  # 30 minute timeout
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    raise subprocess.TimeoutExpired(cmd, 1800)
+                    
+            except Exception as e:
+                process.kill()
+                raise e
+            
+            print(f"      " + "=" * 60)
             
             # Restore original directory
             os.chdir(original_cwd)
             
-            if result.returncode == 0:
+            if return_code == 0:
                 print(f"   ✅ Success")
                 self.processed_files.append(collection)
                 return True
             else:
-                print(f"   ❌ Failed (exit code: {result.returncode})")
-                print(f"   Error: {result.stderr}")
-                self.failed_files.append((collection, result.stderr))
+                print(f"   ❌ Failed (exit code: {return_code})")
+                error_output = '\n'.join(output_lines[-10:]) if output_lines else "No output captured"
+                print(f"   📋 Last output lines: {error_output}")
+                self.failed_files.append((collection, error_output))
                 return False
                 
         except subprocess.TimeoutExpired:
@@ -624,6 +676,7 @@ def main():
     use_gui = True
     input_folder = None
     socwatch_dir = None
+    output_dir = None
     
     args = sys.argv[1:]  # Remove script name
     i = 0
@@ -638,6 +691,7 @@ def main():
             print("  -h, --help                    Show this help message")
             print("  --cli                         Force CLI mode (no GUI dialogs)")
             print("  --socwatch-dir <path>         Specify SocWatch installation directory")
+            print("  --output-dir <path>           Specify output directory (default: same as input)")
             print("\nModes:")
             print("  python socwatch_pp.py                    # GUI mode - select folder with dialog")
             print("  python socwatch_pp.py <input_folder>     # CLI mode - use specified folder")
@@ -646,6 +700,7 @@ def main():
             print("  python socwatch_pp.py                              # Open folder selection dialog")
             print("  python socwatch_pp.py C:\\data\\socwatch_traces      # Use specified folder")
             print("  python socwatch_pp.py --cli C:\\data\\traces         # Use CLI mode")
+            print("  python socwatch_pp.py --output-dir D:\\results C:\\data  # Save results to local directory")
             print("  python socwatch_pp.py --socwatch-dir D:\\MySocWatch C:\\data  # Use custom SocWatch dir")
             print("\nEnvironment Variables:")
             print("  SOCWATCH_DIR                  SocWatch installation directory")
@@ -660,6 +715,13 @@ def main():
                 print("❌ --socwatch-dir requires a directory path")
                 sys.exit(1)
             socwatch_dir = args[i + 1]
+            i += 1  # Skip next argument as it's the directory path
+            
+        elif arg == '--output-dir':
+            if i + 1 >= len(args):
+                print("❌ --output-dir requires a directory path")
+                sys.exit(1)
+            output_dir = Path(args[i + 1])
             i += 1  # Skip next argument as it's the directory path
             
         elif arg.startswith('--'):
@@ -687,6 +749,15 @@ def main():
     
     # Initialize processor
     processor = SocWatchProcessor(socwatch_base_dir=socwatch_dir, use_gui=use_gui)
+    
+    # Set custom output directory if provided
+    if output_dir:
+        processor.custom_output_dir = output_dir
+        print(f"📁 Custom output directory: {output_dir}")
+        # Create output directory if it doesn't exist
+        output_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        processor.custom_output_dir = None
     
     # Get input folder
     if use_gui and input_folder is None:
