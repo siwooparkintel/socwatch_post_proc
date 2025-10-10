@@ -1,0 +1,6 @@
+# SocWatch Post-Processor requires only Python standard library
+# No external dependencies needed!
+# 
+# Uses built-in modules:
+# - tkinter (for GUI - included with Python on Windows)
+# - pathlib, subprocess, glob (standard library)
