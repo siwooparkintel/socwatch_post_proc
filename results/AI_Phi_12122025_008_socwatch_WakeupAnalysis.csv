@@ -1,0 +1,43 @@
+--------------------------------------------------------------------------
+** INTERNAL USE ONLY **
+Intel(R) SoC Watch for Windows* OS Version 2025.5.0 [Jul  3 2025]
+Build Ref: eb71eb355ee5245549cefdd6ebec487f4ec32c2d
+Driver Version 2.20.2 [May  6 2025]
+Copyright (c) 2024 Intel Corporation. All Rights Reserved.
+Platform power analysis tool for use with Intel processors/chipsets/platforms.
+email: SoCWatchDevelopers@intel.com 
+*Other names and brands may be claimed as the property of others. 
+--------------------------------------------------------------------------
+Command line options: -s 0 -o c:\hobl_data\socwatch\AI_Phi_12122025 -f temp -f npu -f gfx -f memss-pstate -f cpu-cstate -f hw-cpu-hwp -f hw-cpu-cstate -f hw-cpu-pstate -f os-cpu-cstate -f os-cpu-pstate -f hw-igfx-cstate -f hw-igfx-pstate -f display-state -f ddr-bw -f bw-all -f noc-pstate -f media-pstate -m -r auto --no-post-processing 
+
+Program Started: N/A
+Data Collection Started: 2025-12-13 02:31:52 GMT 
+QPC Clock Frequency (MHz): 10 
+CPU Base Operating Frequency (MHz): 3300
+Collection duration (sec): 99.8664
+Collection begin timestamp: 2659095192044
+Collection end timestamp: 2660093853283
+System Name: 17A-59DUT
+Operating System: Windows 11 [11.0 build 26100.5074]
+CPU: Lunar Lake
+CPU ID (family.model.stepping): 0x6.0xbd.0x1
+Platform ID: 0b111
+Integrated GPU Device ID: 0x64a0
+Intel(R) PMT: Lunar Lake SoCN (0x3072005)
+Intel(R) PMT: Lunar Lake SoCN Fixed (0x3072105)
+PCH: Lunar Lake PCH-M (LNPCH-M)
+EDRAM Present: No
+Supported S0ix State(s) for PCD die: S0i2.0 S0i2.1 S0i2.2  
+Total # of packages: 1 
+Total # of cores: 8 
+Total # of logical processors: 8
+
+CPU native model:
+Package_0/Core_0 = LNC
+Package_0/Core_1 = LNC
+Package_0/Core_2 = LNC
+Package_0/Core_3 = LNC
+Package_0/Core_4 = SKT
+Package_0/Core_5 = SKT
+Package_0/Core_6 = SKT
+Package_0/Core_7 = SKT

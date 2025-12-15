@@ -195,6 +195,12 @@ class SocWatchProcessor:
         
         print(f"🔍 Found {len(versions)} SocWatch version(s)")
         
+        # If only one version, auto-select it
+        if len(versions) == 1:
+            self.selected_version = versions[0]
+            print(f"✅ Auto-selected (only version available): {self.selected_version}")
+            return True
+        
         # Always use console selection for now - GUI dialogs are having issues
         print("📝 Using console selection for SocWatch version...")
         return self._select_version_console(versions)
@@ -470,7 +476,7 @@ class SocWatchProcessor:
         base_name = collection['base_name']
         collection_dir = collection['directory']
         
-        # Determine output directory with unique naming
+        # Determine output directory
         if self.custom_output_dir:
             # Use custom output directory with unique collection identifier
             # Create a unique name using the parent directory name (e.g., CataV3_000, CataV3_004, etc.)
@@ -478,13 +484,14 @@ class SocWatchProcessor:
             parent_folder = collection_dir.parent.name  # e.g., "CataV3_OVEP_TME_000"
             unique_name = f"{parent_folder}_{collection_id}"  # e.g., "CataV3_OVEP_TME_000_CataV3_000"
             
-            collection_output_dir = self.custom_output_dir / unique_name / f"{base_name}_summary"
-            summary_csv = collection_output_dir / f"{base_name}_summary.csv"
+            # add timestamp after parent_folder here if needed to ensure uniqueness
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            collection_output_dir = self.custom_output_dir / f"{parent_folder}_{timestamp}" / unique_name
             print(f"   📁 Unique output: {unique_name}")
         else:
-            # Use default: same location as input files
-            collection_output_dir = collection_dir / f"{base_name}_summary"
-            summary_csv = collection_dir / f"{base_name}_summary.csv"
+            # Use default: same location as input files (no subfolder)
+            collection_output_dir = collection_dir
         
         # Check if already processed in multiple locations
         skip_reasons = []
@@ -494,7 +501,6 @@ class SocWatchProcessor:
         source_summary_csv = collection_dir / f"{base_name}.csv"
         source_summary_csv_alt = collection_dir / f"{base_name}_summary.csv"
         source_wakeup_csv = collection_dir / f"{base_name}_WakeupAnalysis.csv"
-        source_summary_folder = collection_dir / f"{base_name}_summary"
         
         if source_summary_csv.exists():
             skip_reasons.append(f"source summary file: {source_summary_csv.name}")
@@ -502,21 +508,15 @@ class SocWatchProcessor:
             skip_reasons.append(f"source summary file: {source_summary_csv_alt.name}")
         elif source_wakeup_csv.exists():
             skip_reasons.append(f"wakeup analysis file: {source_wakeup_csv.name}")
-        elif source_summary_folder.exists() and any(source_summary_folder.glob("*.csv")):
-            skip_reasons.append(f"source summary folder: {source_summary_folder.name}")
         
         # Check 2: Output directory (if using custom output)
         if self.custom_output_dir:
             output_summary_csv = collection_output_dir / f"{base_name}.csv"
             output_wakeup_csv = collection_output_dir / f"{base_name}_WakeupAnalysis.csv"
-            if summary_csv.exists():
-                skip_reasons.append(f"output summary file: {summary_csv.name}")
-            elif output_summary_csv.exists():
+            if output_summary_csv.exists():
                 skip_reasons.append(f"output summary file: {output_summary_csv.name}")
             elif output_wakeup_csv.exists():
                 skip_reasons.append(f"output wakeup analysis: {output_wakeup_csv.name}")
-        elif not self.custom_output_dir and summary_csv.exists():
-            skip_reasons.append(f"summary file: {summary_csv.name}")
         
         # Skip if already processed anywhere
         if skip_reasons:
@@ -615,8 +615,40 @@ class SocWatchProcessor:
                 return True
             else:
                 print(f"   ❌ Failed (exit code: {return_code})")
-                error_output = '\n'.join(output_lines[-10:]) if output_lines else "No output captured"
-                print(f"   📋 Last output lines: {error_output}")
+                
+                # Show detailed error information
+                if output_lines:
+                    print(f"   📋 Last 15 output lines:")
+                    for line in output_lines[-15:]:
+                        print(f"      {line}")
+                    
+                    # Check for common error patterns
+                    error_summary = []
+                    for line in output_lines:
+                        line_lower = line.lower()
+                        if any(keyword in line_lower for keyword in ['error', 'failed', 'exception', 'access denied', 'permission']):
+                            error_summary.append(line)
+                    
+                    if error_summary:
+                        print(f"   ⚠️  Error indicators found:")
+                        for error_line in error_summary[-5:]:  # Show last 5 error lines
+                            print(f"      ⚠️  {error_line}")
+                    
+                    # Check output directory write permission
+                    try:
+                        test_file = Path(output_dir) / ".write_test"
+                        test_file.touch()
+                        test_file.unlink()
+                        print(f"   ✓ Output directory write test: PASSED")
+                    except Exception as perm_error:
+                        print(f"   ❌ Output directory write test: FAILED - {perm_error}")
+                        error_summary.append(f"Write permission issue: {perm_error}")
+                    
+                    error_output = f"Exit code {return_code}. " + ('\n'.join(error_summary) if error_summary else '\n'.join(output_lines[-10:]))
+                else:
+                    error_output = f"Exit code {return_code}. No output captured"
+                    print(f"   📋 No output captured from SocWatch")
+                
                 self.failed_files.append((collection, error_output))
                 return False
                 

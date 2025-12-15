@@ -1,0 +1,1466 @@
+
+--------------------------------------------------------------------------
+** INTERNAL USE ONLY **
+Intel(R) SoC Watch for Windows* OS Version 2025.5.0 [Jul  3 2025]
+Build Ref: eb71eb355ee5245549cefdd6ebec487f4ec32c2d
+Driver Version 2.20.2 [May  6 2025]
+Post Processed using SoC Watch for Windows* OS Version 2025.5.0 [Jul  3 2025]
+Post Processed Build Ref: eb71eb355ee5245549cefdd6ebec487f4ec32c2d
+Copyright (c) 2024 Intel Corporation. All Rights Reserved.
+Platform power analysis tool for use with Intel processors/chipsets/platforms.
+email: SoCWatchDevelopers@intel.com 
+*Other names and brands may be claimed as the property of others. 
+--------------------------------------------------------------------------
+
+Command line options: -s 0 -o c:\hobl_data\socwatch\AI_Phi_12122025 -f temp -f npu -f gfx -f memss-pstate -f cpu-cstate -f hw-cpu-hwp -f hw-cpu-cstate -f hw-cpu-pstate -f os-cpu-cstate -f os-cpu-pstate -f hw-igfx-cstate -f hw-igfx-pstate -f display-state -f ddr-bw -f bw-all -f noc-pstate -f media-pstate -m -r auto --no-post-processing 
+
+Program Started: N/A
+Data Collection Started: 2025-12-13 01:40:16 GMT 
+QPC Clock Frequency (MHz): 10 
+CPU Base Operating Frequency (MHz): 3300
+Collection duration (sec): 108.118
+Collection begin timestamp: 2628139717493
+Collection end timestamp: 2629220888440
+
+System Name: 17A-59DUT
+Operating System: Windows 11 [11.0 build 26100.5074]
+CPU: Lunar Lake
+CPU ID (family.model.stepping): 0x6.0xbd.0x1
+Platform ID: 0b111
+Integrated GPU Device ID: 0x64a0
+Intel(R) PMT: Lunar Lake SoCN (0x3072005)
+Intel(R) PMT: Lunar Lake SoCN Fixed (0x3072105)
+PCH: Lunar Lake PCH-M (LNPCH-M)
+EDRAM Present: No
+Supported S0ix State(s) for PCD die: S0i2.0 S0i2.1 S0i2.2  
+Total # of packages: 1 
+Total # of cores: 8 
+Total # of logical processors: 8
+
+CPU native model:
+Package_0/Core_0 = LNC
+Package_0/Core_1 = LNC
+Package_0/Core_2 = LNC
+Package_0/Core_3 = LNC
+Package_0/Core_4 = SKT
+Package_0/Core_5 = SKT
+Package_0/Core_6 = SKT
+Package_0/Core_7 = SKT
+
+
+Note: Hardware Controlled Performance (HWP) States is enabled in autonomous mode.
+
+=============================================================
+Platform Monitoring Technology CPU Package C-States Residency
+=============================================================
+
+Platform Monitoring Technology CPU Package C-States Residency Summary: Residency (Percentage and Time)
+C-State, Package Residency (%), Package Residency (msec)
+-------, ---------------------, ------------------------
+PC0    , 90.75                , 97894.08                
+PC2    , 0.79                 , 851.57                  
+PC6.1  , 0.01                 , 15.08                   
+PC6.2  , 0.21                 , 228.22                  
+PC10.1 , 0.69                 , 745.82                  
+PC10.2 , 7.54                 , 8131.75                 
+PC10.3 , 0.00                 , 0.00                    
+
+Platform Monitoring Technology CPU Package C-States Residency Summary: Total Samples Received
+Package, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+-------, ------------------, ----------------------------, ----------------------------, ----------------------------
+Package, 1149              , 71.08                       , 277.91                      , 93.86                       
+
+==================================
+CPU Package C-State Entrance Count
+==================================
+
+CPU Package C-State Entrance Count Summary: Total
+     , State , Total (Count)
+     , ----- , -------------
+     , PC0   , 2296.00      
+     , PC2   , 2296.00      
+     , PC6.1 , 14.00        
+     , PC6.2 , 264.00       
+     , PC10.1, 251.00       
+     , PC10.2, 1575.00      
+     , PC10.3, 0.00         
+Total,       , 6696.00      
+
+CPU Package C-State Entrance Count Summary: Total Samples Received
+, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+, ------------------, ----------------------------, ----------------------------, ----------------------------
+, 1149              , 71.09                       , 277.91                      , 93.86                       
+
+===============
+Package C-State
+===============
+
+Note: PC2 is non-architectural state - software cannot request to go to PC2 explicitly.  PC2 can be a transient state between PC0 and deeper pkgC states.
+
+
+Package C-State Summary: Residency (Percentage and Time)
+C-State, CPU/Package_0 Residency (%), CPU/Package_0 Residency (msec)
+-------, ---------------------------, ------------------------------
+PC0    , 90.33                      , 97431.91                      
+PC2    , 0.79                       , 852.19                        
+PC6    , 0.24                       , 258.03                        
+PC10   , 8.64                       , 9324.46                       
+
+Package C-State Summary: Total Samples Received
+Package      , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+-------      , ------------------, ----------------------------, ----------------------------, ----------------------------
+CPU/Package_0, 5738              , 0.00                        , 261.14                      , 18.80                       
+
+============
+Core C-State
+============
+
+Core C-State Summary: Residency (Percentage and Time)
+C-State, CPU/Package_0/Core_0 Residency (%), CPU/Package_0/Core_1 Residency (%), CPU/Package_0/Core_2 Residency (%), CPU/Package_0/Core_3 Residency (%), CPU/Package_0/Core_4 Residency (%), CPU/Package_0/Core_5 Residency (%), CPU/Package_0/Core_6 Residency (%), CPU/Package_0/Core_7 Residency (%), CPU/Package_0/Core_0 Residency (msec), CPU/Package_0/Core_1 Residency (msec), CPU/Package_0/Core_2 Residency (msec), CPU/Package_0/Core_3 Residency (msec), CPU/Package_0/Core_4 Residency (msec), CPU/Package_0/Core_5 Residency (msec), CPU/Package_0/Core_6 Residency (msec), CPU/Package_0/Core_7 Residency (msec)
+-------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------
+CC0    , 33.75                             , 39.97                             , 41.72                             , 28.47                             , 7.33                              , 6.76                              , 8.08                              , 11.51                             , 36403.42                             , 43112.89                             , 44998.17                             , 30712.46                             , 7902.13                              , 7295.39                              , 8720.03                              , 12414.34                             
+CC1    , 31.32                             , 31.69                             , 33.38                             , 30.55                             , 4.04                              , 3.59                              , 3.73                              , 3.76                              , 33779.81                             , 34178.56                             , 36009.24                             , 32958.41                             , 4361.38                              , 3870.45                              , 4025.75                              , 4051.61                              
+CC6    , 2.66                              , 2.40                              , 1.97                              , 2.76                              , 88.63                             , 89.65                             , 88.18                             , 84.73                             , 2874.13                              , 2593.37                              , 2124.84                              , 2978.21                              , 95603.02                             , 96700.67                             , 95120.72                             , 91400.55                             
+CC7    , 32.27                             , 25.94                             , 22.93                             , 38.21                             , 0.00                              , 0.00                              , 0.00                              , 0.00                              , 34809.23                             , 27981.75                             , 24734.25                             , 41217.39                             , 0.00                                 , 0.00                                 , 0.00                                 , 0.00                                 
+
+Core C-State Summary: Total Samples Received
+Core                , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+----                , ------------------, ----------------------------, ----------------------------, ----------------------------
+CPU/Package_0/Core_0, 1024              , 0.09                        , 505.74                      , 105.25                      
+CPU/Package_0/Core_1, 1063              , 0.09                        , 515.93                      , 101.46                      
+CPU/Package_0/Core_2, 1076              , 0.09                        , 496.77                      , 100.05                      
+CPU/Package_0/Core_3, 1038              , 0.02                        , 368.93                      , 103.75                      
+CPU/Package_0/Core_4, 337               , 0.08                        , 3047.44                     , 319.68                      
+CPU/Package_0/Core_5, 428               , 0.07                        , 2467.23                     , 250.75                      
+CPU/Package_0/Core_6, 396               , 15.13                       , 2180.77                     , 269.38                      
+CPU/Package_0/Core_7, 440               , 0.08                        , 2163.00                     , 235.36                      
+
+====================
+Package C-State (OS)
+====================
+
+ACPI C-States available to OS
+State  , Hardware State, Mwait Hint, Worst-case enter/exit latency (us), Average power consumption when in state (mW)
+-----  , --------------, ----------, ----------------------------------, --------------------------------------------
+ACPI C1, C1            , 0x0       , 0                                 , 0                                           
+
+Package C-State (OS) Summary: Residency (Percentage and Time)
+C-State, CPU/Package_0 Residency (%), CPU/Package_0 Residency (msec)
+-------, ---------------------------, ------------------------------
+ACPI C0, 88.55                      , 95739.18                      
+ACPI C1, 0.14                       , 146.56                        
+ACPI C2, 0.32                       , 344.69                        
+ACPI C3, 10.99                      , 11883.54                      
+
+Package C-State (OS) Summary: Entry Counts
+C-State, CPU/Package_0 Entry Count
+-------, -------------------------
+ACPI C0, 51887                    
+ACPI C1, 6855                     
+ACPI C2, 37970                    
+ACPI C3, 6247                     
+Total  , 102959                   
+
+=================
+Core C-State (OS)
+=================
+
+CPU Core Concurrency (OS)
+# Active Cores, Time Active (%), Time Active (ms)
+--------------, ---------------, ----------------
+0             , 11.45          , 12374.79        
+1             , 39.05          , 42222.35        
+2             , 31.46          , 34017.28        
+3             , 13.68          , 14790.81        
+4             , 1.55           , 1677.53         
+5             , 0.50           , 535.52          
+6             , 0.20           , 217.80          
+7             , 0.09           , 94.40           
+8             , 2.02           , 2183.51         
+
+Total time during which at least one core was active: 95739.18ms
+
+Core C-State (OS) Summary: Residency (Percentage and Time)
+C-State, CPU/Package_0/Core_0 Residency (%), CPU/Package_0/Core_1 Residency (%), CPU/Package_0/Core_2 Residency (%), CPU/Package_0/Core_3 Residency (%), CPU/Package_0/Core_4 Residency (%), CPU/Package_0/Core_5 Residency (%), CPU/Package_0/Core_6 Residency (%), CPU/Package_0/Core_7 Residency (%), CPU/Package_0/Core_0 Residency (msec), CPU/Package_0/Core_1 Residency (msec), CPU/Package_0/Core_2 Residency (msec), CPU/Package_0/Core_3 Residency (msec), CPU/Package_0/Core_4 Residency (msec), CPU/Package_0/Core_5 Residency (msec), CPU/Package_0/Core_6 Residency (msec), CPU/Package_0/Core_7 Residency (msec)
+-------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------
+ACPI C0, 32.48                             , 38.52                             , 40.19                             , 27.18                             , 6.76                              , 6.20                              , 7.48                              , 10.89                             , 35112.29                             , 41642.96                             , 43445.91                             , 29390.11                             , 7304.41                              , 6698.32                              , 8082.85                              , 11775.85                             
+ACPI C1, 4.66                              , 6.01                              , 7.03                              , 3.66                              , 0.02                              , 0.02                              , 0.04                              , 0.07                              , 5038.52                              , 6499.01                              , 7596.79                              , 3956.86                              , 24.84                                , 26.15                                , 43.13                                , 70.79                                
+ACPI C2, 6.90                              , 7.31                              , 7.17                              , 5.98                              , 0.13                              , 0.06                              , 0.15                              , 0.13                              , 7460.75                              , 7901.02                              , 7751.83                              , 6466.62                              , 144.30                               , 68.47                                , 166.66                               , 143.58                               
+ACPI C3, 55.96                             , 48.16                             , 45.62                             , 63.17                             , 93.09                             , 93.72                             , 92.33                             , 88.91                             , 60502.42                             , 52070.99                             , 49319.44                             , 68300.38                             , 100640.42                            , 101321.04                            , 99821.34                             , 96123.75                             
+
+Core C-State (OS) Summary: Entry Counts
+C-State, CPU/Package_0/Core_0 Entry Count, CPU/Package_0/Core_1 Entry Count, CPU/Package_0/Core_2 Entry Count, CPU/Package_0/Core_3 Entry Count, CPU/Package_0/Core_4 Entry Count, CPU/Package_0/Core_5 Entry Count, CPU/Package_0/Core_6 Entry Count, CPU/Package_0/Core_7 Entry Count
+-------, --------------------------------, --------------------------------, --------------------------------, --------------------------------, --------------------------------, --------------------------------, --------------------------------, --------------------------------
+ACPI C0, 199911                          , 298075                          , 313511                          , 224358                          , 17267                           , 16151                           , 15309                           , 16034                           
+ACPI C1, 30236                           , 71077                           , 79905                           , 32704                           , 245                             , 43                              , 32                              , 119                             
+ACPI C2, 30123                           , 32906                           , 39488                           , 20498                           , 140                             , 42                              , 70                              , 193                             
+ACPI C3, 139551                          , 194092                          , 194119                          , 171157                          , 16883                           , 16067                           , 15208                           , 15722                           
+Total  , 399821                          , 596150                          , 627023                          , 448717                          , 34535                           , 32303                           , 30619                           , 32068                           
+
+===================
+Thread C-State (OS)
+===================
+
+Thread C-State (OS) Summary: Residency (Percentage and Time)
+C-State, CPU/Package_0/Core_0/Thread_0 Residency (%), CPU/Package_0/Core_1/Thread_1 Residency (%), CPU/Package_0/Core_2/Thread_2 Residency (%), CPU/Package_0/Core_3/Thread_3 Residency (%), CPU/Package_0/Core_4/Thread_4 Residency (%), CPU/Package_0/Core_5/Thread_5 Residency (%), CPU/Package_0/Core_6/Thread_6 Residency (%), CPU/Package_0/Core_7/Thread_7 Residency (%), CPU/Package_0/Core_0/Thread_0 Residency (msec), CPU/Package_0/Core_1/Thread_1 Residency (msec), CPU/Package_0/Core_2/Thread_2 Residency (msec), CPU/Package_0/Core_3/Thread_3 Residency (msec), CPU/Package_0/Core_4/Thread_4 Residency (msec), CPU/Package_0/Core_5/Thread_5 Residency (msec), CPU/Package_0/Core_6/Thread_6 Residency (msec), CPU/Package_0/Core_7/Thread_7 Residency (msec)
+-------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------
+ACPI C0, 32.48                                      , 38.52                                      , 40.19                                      , 27.18                                      , 6.76                                       , 6.20                                       , 7.48                                       , 10.89                                      , 35112.29                                      , 41642.96                                      , 43445.91                                      , 29390.11                                      , 7304.41                                       , 6698.32                                       , 8082.85                                       , 11775.85                                      
+ACPI C1, 4.66                                       , 6.01                                       , 7.03                                       , 3.66                                       , 0.02                                       , 0.02                                       , 0.04                                       , 0.07                                       , 5038.52                                       , 6499.01                                       , 7596.79                                       , 3956.86                                       , 24.84                                         , 26.15                                         , 43.13                                         , 70.79                                         
+ACPI C2, 6.90                                       , 7.31                                       , 7.17                                       , 5.98                                       , 0.13                                       , 0.06                                       , 0.15                                       , 0.13                                       , 7460.75                                       , 7901.02                                       , 7751.83                                       , 6466.62                                       , 144.30                                        , 68.47                                         , 166.66                                        , 143.58                                        
+ACPI C3, 55.96                                      , 48.16                                      , 45.62                                      , 63.17                                      , 93.09                                      , 93.72                                      , 92.33                                      , 88.91                                      , 60502.42                                      , 52070.99                                      , 49319.44                                      , 68300.38                                      , 100640.42                                     , 101321.04                                     , 99821.34                                      , 96123.75                                      
+
+Thread C-State (OS) Summary: Entry Counts
+C-State, CPU/Package_0/Core_0/Thread_0 Entry Count, CPU/Package_0/Core_1/Thread_1 Entry Count, CPU/Package_0/Core_2/Thread_2 Entry Count, CPU/Package_0/Core_3/Thread_3 Entry Count, CPU/Package_0/Core_4/Thread_4 Entry Count, CPU/Package_0/Core_5/Thread_5 Entry Count, CPU/Package_0/Core_6/Thread_6 Entry Count, CPU/Package_0/Core_7/Thread_7 Entry Count
+-------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------
+ACPI C0, 199911                                   , 298075                                   , 313511                                   , 224358                                   , 17267                                    , 16151                                    , 15309                                    , 16034                                    
+ACPI C1, 30236                                    , 71077                                    , 79905                                    , 32704                                    , 245                                      , 43                                       , 32                                       , 119                                      
+ACPI C2, 30123                                    , 32906                                    , 39488                                    , 20498                                    , 140                                      , 42                                       , 70                                       , 193                                      
+ACPI C3, 139551                                   , 194092                                   , 194119                                   , 171157                                   , 16883                                    , 16067                                    , 15208                                    , 15722                                    
+Total  , 399821                                   , 596150                                   , 627023                                   , 448717                                   , 34535                                    , 32303                                    , 30619                                    , 32068                                    
+
+====================
+Package Wakeups (OS)
+====================
+
+Package Wakeups (OS) Summary: Type Count
+Wakeup Type, CPU/Package_0 Count
+-----------, -------------------
+CLK        , 602                
+DPC        , 98                 
+INT        , 1187               
+RDY        , 45071              
+UNKNOWN    , 4114               
+
+Package Wakeups (OS) Summary: Top 10 Most-Frequent for Package_0
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                 , Count
+-----------, ----------, ---------, -------------------------, ---------------------                 , -----
+RDY        , 9860      , 15168    ,                          , python.exe                            , 43584
+UNKNOWN    ,           ,          ,                          ,                                       , 4114 
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent, 1075 
+CLK        ,           ,          , CLK_OWNER/TMR_PENDING    ,                                       , 342  
+RDY        , 15344     , 4652     ,                          , MsMpEng.exe                           , 339  
+CLK        ,           ,          , CLK_OWNER                ,                                       , 161  
+RDY        , 14180     , 7816     ,                          , SimpleRemoteConsole.exe               , 119  
+CLK        ,           ,          ,                          ,                                       , 99   
+RDY        , 14180     , 14392    ,                          , SimpleRemoteConsole.exe               , 90   
+RDY        , 12124     , 5408     ,                          , AxonUploaderService.exe               , 84   
+
+=================
+Core Wakeups (OS)
+=================
+
+Core Wakeups (OS) Summary: Type Count
+Wakeup Type, CPU/Package_0/Core_0 Count, CPU/Package_0/Core_1 Count, CPU/Package_0/Core_2 Count, CPU/Package_0/Core_3 Count, CPU/Package_0/Core_4 Count, CPU/Package_0/Core_5 Count, CPU/Package_0/Core_6 Count, CPU/Package_0/Core_7 Count
+-----------, --------------------------, --------------------------, --------------------------, --------------------------, --------------------------, --------------------------, --------------------------, --------------------------
+CLK        , 4821                      , 955                       , 1317                      , 1316                      , 4                         , 3                         , 7                         , 1                         
+DPC        , 2196                      , 1678                      , 983                       , 841                       , 308                       , 271                       , 275                       , 279                       
+INT        , 6577                      , 4974                      , 3511                      , 7339                      , 13663                     , 13639                     , 13614                     , 13529                     
+RDY        , 169521                    , 285600                    , 297905                    , 206421                    , 2985                      , 1959                      , 1125                      , 1872                      
+UNKNOWN    , 16795                     , 4867                      , 9795                      , 8441                      , 307                       , 279                       , 288                       , 353                       
+
+Core Wakeups (OS) Summary: Top 10 Most-Frequent for Core_0
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                 , Count 
+-----------, ----------, ---------, -------------------------, ---------------------                 , ----- 
+RDY        , 9860      , 15168    ,                          , python.exe                            , 149910
+UNKNOWN    ,           ,          ,                          ,                                       , 16795 
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent, 5944  
+CLK        ,           ,          , CLK_OWNER/TMR_PENDING    ,                                       , 4588  
+RDY        , 9860      , 7576     ,                          , python.exe                            , 2578  
+RDY        , 4         , 11868    ,                          , System                                , 2035  
+RDY        , 9860      , 9428     ,                          , python.exe                            , 1741  
+RDY        , 4         , 524      ,                          , System                                , 1523  
+RDY        , 9860      , 7124     ,                          , python.exe                            , 1413  
+DPC        ,           ,          ,                          , stornvme.sys!0xFFFFF807298B30E0       , 1231  
+
+Core Wakeups (OS) Summary: Top 10 Most-Frequent for Core_1
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                 , Count 
+-----------, ----------, ---------, -------------------------, ---------------------                 , ----- 
+RDY        , 9860      , 15168    ,                          , python.exe                            , 257105
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent, 4922  
+UNKNOWN    ,           ,          ,                          ,                                       , 4867  
+RDY        , 4         , 524      ,                          , System                                , 4018  
+RDY        , 9860      , 7576     ,                          , python.exe                            , 3168  
+RDY        , 9860      , 3808     ,                          , python.exe                            , 2709  
+RDY        , 9860      , 9428     ,                          , python.exe                            , 2564  
+RDY        , 9860      , 2488     ,                          , python.exe                            , 2456  
+RDY        , 4         , 11868    ,                          , System                                , 1646  
+RDY        , 9860      , 10220    ,                          , python.exe                            , 1354  
+
+Core Wakeups (OS) Summary: Top 10 Most-Frequent for Core_2
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                 , Count 
+-----------, ----------, ---------, -------------------------, ---------------------                 , ----- 
+RDY        , 9860      , 15168    ,                          , python.exe                            , 280106
+UNKNOWN    ,           ,          ,                          ,                                       , 9795  
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent, 3511  
+RDY        , 9860      , 2488     ,                          , python.exe                            , 2422  
+RDY        , 9860      , 10220    ,                          , python.exe                            , 1381  
+RDY        , 15344     , 2704     ,                          , MsMpEng.exe                           , 1323  
+CLK        ,           ,          , CLK_OWNER/TMR_PENDING    ,                                       , 1178  
+RDY        , 9860      , 15332    ,                          , python.exe                            , 997   
+RDY        , 9860      , 7576     ,                          , python.exe                            , 933   
+RDY        , 9860      , 3808     ,                          , python.exe                            , 916   
+
+Core Wakeups (OS) Summary: Top 10 Most-Frequent for Core_3
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                 , Count 
+-----------, ----------, ---------, -------------------------, ---------------------                 , ----- 
+RDY        , 9860      , 15168    ,                          , python.exe                            , 190472
+UNKNOWN    ,           ,          ,                          ,                                       , 8441  
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent, 7339  
+RDY        , 9860      , 3808     ,                          , python.exe                            , 2564  
+RDY        , 9860      , 15332    ,                          , python.exe                            , 2002  
+RDY        , 9860      , 10220    ,                          , python.exe                            , 1233  
+CLK        ,           ,          , CLK_OWNER/TMR_PENDING    ,                                       , 1180  
+RDY        , 15344     , 12804    ,                          , MsMpEng.exe                           , 658   
+RDY        , 15344     , 11380    ,                          , MsMpEng.exe                           , 633   
+RDY        , 9860      , 7576     ,                          , python.exe                            , 606   
+
+Core Wakeups (OS) Summary: Top 10 Most-Frequent for Core_4
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                              , Count
+-----------, ----------, ---------, -------------------------, ---------------------                              , -----
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent             , 13663
+RDY        , 9860      , 15168    ,                          , python.exe                                         , 310  
+UNKNOWN    ,           ,          ,                          ,                                                    , 307  
+RDY        , 9860      , 10220    ,                          , python.exe                                         , 277  
+RDY        , 14072     , 5468     ,                          , OpenConsole.exe                                    , 260  
+DPC        ,           ,          ,                          , ntoskrnl.exe!ExAcquireRundownProtectionCacheAwareEx, 227  
+RDY        , 15344     , 14820    ,                          , MsMpEng.exe                                        , 198  
+RDY        , 15344     , 12804    ,                          , MsMpEng.exe                                        , 191  
+RDY        , 8292      , 12964    ,                          , WmiPrvSE.exe                                       , 190  
+RDY        , 15344     , 2704     ,                          , MsMpEng.exe                                        , 118  
+
+Core Wakeups (OS) Summary: Top 10 Most-Frequent for Core_5
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                              , Count
+-----------, ----------, ---------, -------------------------, ---------------------                              , -----
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent             , 13639
+RDY        , 9860      , 15168    ,                          , python.exe                                         , 442  
+UNKNOWN    ,           ,          ,                          ,                                                    , 279  
+DPC        ,           ,          ,                          , ntoskrnl.exe!ExAcquireRundownProtectionCacheAwareEx, 233  
+RDY        , 15344     , 11380    ,                          , MsMpEng.exe                                        , 211  
+RDY        , 15344     , 12804    ,                          , MsMpEng.exe                                        , 145  
+RDY        , 9860      , 7124     ,                          , python.exe                                         , 123  
+RDY        , 4         , 524      ,                          , System                                             , 64   
+RDY        , 4         , 11868    ,                          , System                                             , 63   
+RDY        , 9860      , 10220    ,                          , python.exe                                         , 47   
+
+Core Wakeups (OS) Summary: Top 10 Most-Frequent for Core_6
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                              , Count
+-----------, ----------, ---------, -------------------------, ---------------------                              , -----
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent             , 13614
+RDY        , 9860      , 15168    ,                          , python.exe                                         , 346  
+UNKNOWN    ,           ,          ,                          ,                                                    , 288  
+DPC        ,           ,          ,                          , ntoskrnl.exe!ExAcquireRundownProtectionCacheAwareEx, 225  
+RDY        , 9860      , 7124     ,                          , python.exe                                         , 72   
+RDY        , 4         , 11884    ,                          , System                                             , 51   
+RDY        , 9860      , 8464     ,                          , python.exe                                         , 38   
+RDY        , 9860      , 10220    ,                          , python.exe                                         , 30   
+RDY        , 9860      , 4896     ,                          , python.exe                                         , 27   
+RDY        , 4         , 13916    ,                          , System                                             , 24   
+
+Core Wakeups (OS) Summary: Top 10 Most-Frequent for Core_7
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                              , Count
+-----------, ----------, ---------, -------------------------, ---------------------                              , -----
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent             , 13529
+RDY        , 9860      , 15168    ,                          , python.exe                                         , 663  
+UNKNOWN    ,           ,          ,                          ,                                                    , 353  
+DPC        ,           ,          ,                          , ntoskrnl.exe!ExAcquireRundownProtectionCacheAwareEx, 201  
+RDY        , 4         , 13916    ,                          , System                                             , 74   
+RDY        , 9860      , 7124     ,                          , python.exe                                         , 62   
+RDY        , 4         , 11884    ,                          , System                                             , 56   
+RDY        , 5752      , 15280    ,                          , svchost.exe                                        , 39   
+RDY        , 5752      , 6332     ,                          , svchost.exe                                        , 35   
+RDY        , 5752      , 5340     ,                          , svchost.exe                                        , 32   
+
+===================
+Thread Wakeups (OS)
+===================
+
+Processes by Platform Busy Duration
+Rank, Process Name (PID)       , CPU % (Platform), Duration in ms (Platform), CPU % (Logical), Duration in ms (Logical), CSwitches From Idle (per sec)
+----, ------------------       , ----------------, -------------------------, ---------------, ------------------------, -----------------------------
+    , Overall Platform Activity, 87.42           , 94519.10                 , 21.07          , 182278.84               , 9071.66                      
+1   , python.exe (9860)        , 81.40           , 88011.22                 , 12.10          , 104644.04               , 8575.28                      
+2   , System (4)               , 44.99           , 48641.32                 , 7.45           , 64399.14                , 259.56                       
+3   , MsMpEng.exe (15344)      , 1.59            , 1722.75                  , 0.21           , 1831.45                 , 109.09                       
+4   , WmiPrvSE.exe (10912)     , 0.26            , 283.99                   , 0.03           , 288.83                  , 6.82                         
+5   , svchost.exe (5752)       , 0.22            , 240.83                   , 0.05           , 399.76                  , 17.85                        
+
+Processes by Platform Busy Duration Legend:
+  CPU % (Platform): Percentage of time a process was active (i.e. the time at least one logical processor was executing the process).
+  Duration in ms (Platform): Total time in milliseconds that a process was active (i.e. the time at least one logical processor was executing the process overlapped execution only counts once).
+  CPU % (Logical): Percentage of time a process was active based on the accumulated logical processors active time normalized to 100% (i.e. divided by the number of logical processors).
+  Duration in ms (Logical): Total accumulated logical processor time in milliseconds that a process was active (i.e. overlapped execution time counts more than once).
+  CSwitches From Idle (per sec): Frequency of context switches from the idle process per second.
+
+Complete list of System (4) process break down found in table: Kernel Modules by CPU Busy Duration
+Complete list of ISR/DPC Activity break down found in tables: ISR Statistics and DPC Statistics
+
+
+Thread Wakeups (OS) Summary: Type Count
+Wakeup Type, CPU/Package_0/Core_0/Thread_0 Count, CPU/Package_0/Core_1/Thread_1 Count, CPU/Package_0/Core_2/Thread_2 Count, CPU/Package_0/Core_3/Thread_3 Count, CPU/Package_0/Core_4/Thread_4 Count, CPU/Package_0/Core_5/Thread_5 Count, CPU/Package_0/Core_6/Thread_6 Count, CPU/Package_0/Core_7/Thread_7 Count
+-----------, -----------------------------------, -----------------------------------, -----------------------------------, -----------------------------------, -----------------------------------, -----------------------------------, -----------------------------------, -----------------------------------
+CLK        , 4821                               , 955                                , 1317                               , 1316                               , 4                                  , 3                                  , 7                                  , 1                                  
+DPC        , 2196                               , 1678                               , 983                                , 841                                , 308                                , 271                                , 275                                , 279                                
+INT        , 6577                               , 4974                               , 3511                               , 7339                               , 13663                              , 13639                              , 13614                              , 13529                              
+RDY        , 169521                             , 285600                             , 297905                             , 206421                             , 2985                               , 1959                               , 1125                               , 1872                               
+UNKNOWN    , 16795                              , 4867                               , 9795                               , 8441                               , 307                                , 279                                , 288                                , 353                                
+
+Thread Wakeups (OS) Summary: Top 10 Most-Frequent for Thread_0
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                 , Count 
+-----------, ----------, ---------, -------------------------, ---------------------                 , ----- 
+RDY        , 9860      , 15168    ,                          , python.exe                            , 149910
+UNKNOWN    ,           ,          ,                          ,                                       , 16795 
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent, 5944  
+CLK        ,           ,          , CLK_OWNER/TMR_PENDING    ,                                       , 4588  
+RDY        , 9860      , 7576     ,                          , python.exe                            , 2578  
+RDY        , 4         , 11868    ,                          , System                                , 2035  
+RDY        , 9860      , 9428     ,                          , python.exe                            , 1741  
+RDY        , 4         , 524      ,                          , System                                , 1523  
+RDY        , 9860      , 7124     ,                          , python.exe                            , 1413  
+DPC        ,           ,          ,                          , stornvme.sys!0xFFFFF807298B30E0       , 1231  
+
+Thread Wakeups (OS) Summary: Top 10 Most-Frequent for Thread_1
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                 , Count 
+-----------, ----------, ---------, -------------------------, ---------------------                 , ----- 
+RDY        , 9860      , 15168    ,                          , python.exe                            , 257105
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent, 4922  
+UNKNOWN    ,           ,          ,                          ,                                       , 4867  
+RDY        , 4         , 524      ,                          , System                                , 4018  
+RDY        , 9860      , 7576     ,                          , python.exe                            , 3168  
+RDY        , 9860      , 3808     ,                          , python.exe                            , 2709  
+RDY        , 9860      , 9428     ,                          , python.exe                            , 2564  
+RDY        , 9860      , 2488     ,                          , python.exe                            , 2456  
+RDY        , 4         , 11868    ,                          , System                                , 1646  
+RDY        , 9860      , 10220    ,                          , python.exe                            , 1354  
+
+Thread Wakeups (OS) Summary: Top 10 Most-Frequent for Thread_2
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                 , Count 
+-----------, ----------, ---------, -------------------------, ---------------------                 , ----- 
+RDY        , 9860      , 15168    ,                          , python.exe                            , 280106
+UNKNOWN    ,           ,          ,                          ,                                       , 9795  
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent, 3511  
+RDY        , 9860      , 2488     ,                          , python.exe                            , 2422  
+RDY        , 9860      , 10220    ,                          , python.exe                            , 1381  
+RDY        , 15344     , 2704     ,                          , MsMpEng.exe                           , 1323  
+CLK        ,           ,          , CLK_OWNER/TMR_PENDING    ,                                       , 1178  
+RDY        , 9860      , 15332    ,                          , python.exe                            , 997   
+RDY        , 9860      , 7576     ,                          , python.exe                            , 933   
+RDY        , 9860      , 3808     ,                          , python.exe                            , 916   
+
+Thread Wakeups (OS) Summary: Top 10 Most-Frequent for Thread_3
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                 , Count 
+-----------, ----------, ---------, -------------------------, ---------------------                 , ----- 
+RDY        , 9860      , 15168    ,                          , python.exe                            , 190472
+UNKNOWN    ,           ,          ,                          ,                                       , 8441  
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent, 7339  
+RDY        , 9860      , 3808     ,                          , python.exe                            , 2564  
+RDY        , 9860      , 15332    ,                          , python.exe                            , 2002  
+RDY        , 9860      , 10220    ,                          , python.exe                            , 1233  
+CLK        ,           ,          , CLK_OWNER/TMR_PENDING    ,                                       , 1180  
+RDY        , 15344     , 12804    ,                          , MsMpEng.exe                           , 658   
+RDY        , 15344     , 11380    ,                          , MsMpEng.exe                           , 633   
+RDY        , 9860      , 7576     ,                          , python.exe                            , 606   
+
+Thread Wakeups (OS) Summary: Top 10 Most-Frequent for Thread_4
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                              , Count
+-----------, ----------, ---------, -------------------------, ---------------------                              , -----
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent             , 13663
+RDY        , 9860      , 15168    ,                          , python.exe                                         , 310  
+UNKNOWN    ,           ,          ,                          ,                                                    , 307  
+RDY        , 9860      , 10220    ,                          , python.exe                                         , 277  
+RDY        , 14072     , 5468     ,                          , OpenConsole.exe                                    , 260  
+DPC        ,           ,          ,                          , ntoskrnl.exe!ExAcquireRundownProtectionCacheAwareEx, 227  
+RDY        , 15344     , 14820    ,                          , MsMpEng.exe                                        , 198  
+RDY        , 15344     , 12804    ,                          , MsMpEng.exe                                        , 191  
+RDY        , 8292      , 12964    ,                          , WmiPrvSE.exe                                       , 190  
+RDY        , 15344     , 2704     ,                          , MsMpEng.exe                                        , 118  
+
+Thread Wakeups (OS) Summary: Top 10 Most-Frequent for Thread_5
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                              , Count
+-----------, ----------, ---------, -------------------------, ---------------------                              , -----
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent             , 13639
+RDY        , 9860      , 15168    ,                          , python.exe                                         , 442  
+UNKNOWN    ,           ,          ,                          ,                                                    , 279  
+DPC        ,           ,          ,                          , ntoskrnl.exe!ExAcquireRundownProtectionCacheAwareEx, 233  
+RDY        , 15344     , 11380    ,                          , MsMpEng.exe                                        , 211  
+RDY        , 15344     , 12804    ,                          , MsMpEng.exe                                        , 145  
+RDY        , 9860      , 7124     ,                          , python.exe                                         , 123  
+RDY        , 4         , 524      ,                          , System                                             , 64   
+RDY        , 4         , 11868    ,                          , System                                             , 63   
+RDY        , 9860      , 10220    ,                          , python.exe                                         , 47   
+
+Thread Wakeups (OS) Summary: Top 10 Most-Frequent for Thread_6
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                              , Count
+-----------, ----------, ---------, -------------------------, ---------------------                              , -----
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent             , 13614
+RDY        , 9860      , 15168    ,                          , python.exe                                         , 346  
+UNKNOWN    ,           ,          ,                          ,                                                    , 288  
+DPC        ,           ,          ,                          , ntoskrnl.exe!ExAcquireRundownProtectionCacheAwareEx, 225  
+RDY        , 9860      , 7124     ,                          , python.exe                                         , 72   
+RDY        , 4         , 11884    ,                          , System                                             , 51   
+RDY        , 9860      , 8464     ,                          , python.exe                                         , 38   
+RDY        , 9860      , 10220    ,                          , python.exe                                         , 30   
+RDY        , 9860      , 4896     ,                          , python.exe                                         , 27   
+RDY        , 4         , 13916    ,                          , System                                             , 24   
+
+Thread Wakeups (OS) Summary: Top 10 Most-Frequent for Thread_7
+Wakeup Type, Process ID, Thread ID, Vector/# of Expired Timer, Image/ISR/DPC Routine                              , Count
+-----------, ----------, ---------, -------------------------, ---------------------                              , -----
+INT        ,           ,          , 205                      , ntoskrnl.exe!HviIsAnyHypervisorPresent             , 13529
+RDY        , 9860      , 15168    ,                          , python.exe                                         , 663  
+UNKNOWN    ,           ,          ,                          ,                                                    , 353  
+DPC        ,           ,          ,                          , ntoskrnl.exe!ExAcquireRundownProtectionCacheAwareEx, 201  
+RDY        , 4         , 13916    ,                          , System                                             , 74   
+RDY        , 9860      , 7124     ,                          , python.exe                                         , 62   
+RDY        , 4         , 11884    ,                          , System                                             , 56   
+RDY        , 5752      , 15280    ,                          , svchost.exe                                        , 39   
+RDY        , 5752      , 6332     ,                          , svchost.exe                                        , 35   
+RDY        , 5752      , 5340     ,                          , svchost.exe                                        , 32   
+
+====================
+CPU-iGPU Concurrency
+====================
+
+CPU-iGPU Concurrency Summary: Residency (Percentage and Time)
+Concurrency, CPU/Package_0 Residency (%), CPU/Package_0 Residency (msec)
+-----------, ---------------------------, ------------------------------
+Both       , 79.52                      , 85776.86                      
+CPU Only   , 9.30                       , 10028.25                      
+iGPU Only  , 0.11                       , 114.06                        
+Neither    , 11.08                      , 11947.34                      
+
+CPU-iGPU Concurrency Summary: Total Samples Received
+Package ID   , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+----------   , ------------------, ----------------------------, ----------------------------, ----------------------------
+CPU/Package_0, 1149              , 71.79                       , 277.89                      , 93.86                       
+
+=====================
+CPU P-State/Frequency
+=====================
+
+CPU P-State Average Frequency (excluding CPU idle time)
+CPU ID                       , Average (MHz)
+------                       , -------------
+CPU/Package_0/Core_0/Thread_0, 4079         
+CPU/Package_0/Core_1/Thread_1, 4182         
+CPU/Package_0/Core_2/Thread_2, 4153         
+CPU/Package_0/Core_3/Thread_3, 4005         
+CPU/Package_0/Core_4/Thread_4, 3417         
+CPU/Package_0/Core_5/Thread_5, 3418         
+CPU/Package_0/Core_6/Thread_6, 3471         
+CPU/Package_0/Core_7/Thread_7, 3493         
+
+CPU P-State/Frequency Summary: Residency (Percentage and Time)
+P-State , Frequency (MHz), CPU/Package_0/Core_0/Thread_0 Residency (%), CPU/Package_0/Core_1/Thread_1 Residency (%), CPU/Package_0/Core_2/Thread_2 Residency (%), CPU/Package_0/Core_3/Thread_3 Residency (%), CPU/Package_0/Core_4/Thread_4 Residency (%), CPU/Package_0/Core_5/Thread_5 Residency (%), CPU/Package_0/Core_6/Thread_6 Residency (%), CPU/Package_0/Core_7/Thread_7 Residency (%), CPU/Package_0/Core_0/Thread_0 Residency (msec), CPU/Package_0/Core_1/Thread_1 Residency (msec), CPU/Package_0/Core_2/Thread_2 Residency (msec), CPU/Package_0/Core_3/Thread_3 Residency (msec), CPU/Package_0/Core_4/Thread_4 Residency (msec), CPU/Package_0/Core_5/Thread_5 Residency (msec), CPU/Package_0/Core_6/Thread_6 Residency (msec), CPU/Package_0/Core_7/Thread_7 Residency (msec)
+------- , ---------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------
+P0      , 5001 -- 5100   , 0.00                                       , 1.79                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                          , 1930.44                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4901 -- 5000   , 0.00                                       , 0.90                                       , 0.08                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                          , 970.40                                        , 89.78                                         , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4801 -- 4900   , 0.28                                       , 0.92                                       , 0.53                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 306.86                                        , 994.95                                        , 574.65                                        , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4701 -- 4800   , 1.04                                       , 1.39                                       , 1.60                                       , 0.26                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 1121.53                                       , 1499.86                                       , 1728.29                                       , 283.84                                        , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4601 -- 4700   , 2.56                                       , 1.27                                       , 2.18                                       , 0.78                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 2761.40                                       , 1373.47                                       , 2349.34                                       , 844.14                                        , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4501 -- 4600   , 1.70                                       , 2.17                                       , 2.98                                       , 1.85                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 1837.90                                       , 2341.07                                       , 3209.64                                       , 1997.80                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4401 -- 4500   , 3.18                                       , 3.55                                       , 4.80                                       , 2.54                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 3424.99                                       , 3829.00                                       , 5177.66                                       , 2738.97                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4301 -- 4400   , 4.03                                       , 3.90                                       , 4.38                                       , 2.49                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 4342.21                                       , 4206.43                                       , 4721.83                                       , 2686.53                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4201 -- 4300   , 3.28                                       , 5.69                                       , 5.68                                       , 3.97                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 3532.97                                       , 6134.74                                       , 6126.13                                       , 4280.99                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4101 -- 4200   , 5.60                                       , 6.83                                       , 7.86                                       , 5.16                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 6041.33                                       , 7371.10                                       , 8481.30                                       , 5565.86                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 4001 -- 4100   , 3.97                                       , 4.38                                       , 4.52                                       , 3.68                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 4279.80                                       , 4722.59                                       , 4875.00                                       , 3970.96                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 3901 -- 4000   , 1.76                                       , 1.86                                       , 2.28                                       , 1.93                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 1893.36                                       , 2003.65                                       , 2460.50                                       , 2078.98                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 3801 -- 3900   , 1.07                                       , 0.78                                       , 0.72                                       , 0.85                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 1156.30                                       , 843.35                                        , 777.89                                        , 916.38                                        , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 3701 -- 3800   , 0.77                                       , 0.51                                       , 0.31                                       , 0.55                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 830.49                                        , 552.02                                        , 330.76                                        , 594.05                                        , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P0      , 3601 -- 3700   , 0.50                                       , 0.26                                       , 0.31                                       , 0.44                                       , 2.62                                       , 2.21                                       , 3.61                                       , 4.59                                       , 544.32                                        , 279.62                                        , 332.55                                        , 473.78                                        , 2828.68                                       , 2383.40                                       , 3891.91                                       , 4953.81                                       
+P0      , 3501 -- 3600   , 0.25                                       , 0.23                                       , 0.18                                       , 0.42                                       , 1.48                                       , 1.63                                       , 1.80                                       , 3.27                                       , 268.56                                        , 245.50                                        , 195.26                                        , 449.62                                        , 1597.10                                       , 1755.15                                       , 1939.07                                       , 3529.77                                       
+P0      , 3401 -- 3500   , 0.18                                       , 0.12                                       , 0.11                                       , 0.23                                       , 0.73                                       , 0.64                                       , 0.50                                       , 1.25                                       , 190.05                                        , 128.38                                        , 117.89                                        , 249.23                                        , 784.96                                        , 686.28                                        , 541.67                                        , 1343.02                                       
+P0      , 3301 -- 3400   , 0.18                                       , 0.23                                       , 0.11                                       , 0.13                                       , 0.56                                       , 0.38                                       , 0.56                                       , 0.49                                       , 196.71                                        , 244.47                                        , 116.14                                        , 141.23                                        , 604.24                                        , 413.94                                        , 603.26                                        , 525.50                                        
+P1      , 3201 -- 3300   , 0.10                                       , 0.23                                       , 0.04                                       , 0.10                                       , 0.55                                       , 0.36                                       , 0.30                                       , 0.47                                       , 106.56                                        , 247.34                                        , 39.57                                         , 110.05                                        , 588.47                                        , 393.07                                        , 327.28                                        , 507.93                                        
+P2      , 3101 -- 3200   , 0.18                                       , 0.10                                       , 0.10                                       , 0.14                                       , 0.37                                       , 0.54                                       , 0.41                                       , 0.37                                       , 190.78                                        , 110.68                                        , 104.36                                        , 147.27                                        , 396.16                                        , 583.52                                        , 441.21                                        , 396.86                                        
+P3      , 3001 -- 3100   , 0.09                                       , 0.16                                       , 0.31                                       , 0.06                                       , 0.13                                       , 0.32                                       , 0.26                                       , 0.16                                       , 93.61                                         , 172.54                                        , 329.70                                        , 63.53                                         , 137.54                                        , 346.36                                        , 285.71                                        , 175.94                                        
+P4      , 2901 -- 3000   , 0.29                                       , 0.03                                       , 0.04                                       , 0.13                                       , 0.52                                       , 0.33                                       , 0.38                                       , 0.58                                       , 313.91                                        , 33.38                                         , 38.11                                         , 135.59                                        , 560.53                                        , 356.33                                        , 409.10                                        , 624.33                                        
+P5      , 2801 -- 2900   , 0.17                                       , 0.08                                       , 0.02                                       , 0.07                                       , 0.01                                       , 0.05                                       , 0.00                                       , 0.02                                       , 184.69                                        , 86.44                                         , 24.89                                         , 75.06                                         , 12.92                                         , 56.51                                         , 3.96                                          , 22.57                                         
+P6      , 2701 -- 2800   , 0.17                                       , 0.21                                       , 0.10                                       , 0.09                                       , 0.03                                       , 0.01                                       , 0.02                                       , 0.04                                       , 178.74                                        , 228.32                                        , 110.63                                        , 93.37                                         , 33.19                                         , 15.17                                         , 16.80                                         , 39.62                                         
+P7      , 2601 -- 2700   , 0.31                                       , 0.38                                       , 0.27                                       , 0.22                                       , 0.01                                       , 0.03                                       , 0.01                                       , 0.02                                       , 338.10                                        , 409.73                                        , 295.28                                        , 236.55                                        , 7.54                                          , 30.29                                         , 8.61                                          , 24.00                                         
+P8      , 2501 -- 2600   , 0.13                                       , 0.43                                       , 0.12                                       , 0.04                                       , 0.02                                       , 0.01                                       , 0.00                                       , 0.00                                       , 138.77                                        , 466.41                                        , 131.36                                        , 40.26                                         , 18.69                                         , 13.21                                         , 0.00                                          , 0.00                                          
+P9      , 2401 -- 2500   , 0.61                                       , 0.13                                       , 0.21                                       , 0.35                                       , 0.01                                       , 0.00                                       , 0.01                                       , 0.00                                       , 655.19                                        , 141.01                                        , 224.86                                        , 377.98                                        , 6.72                                          , 3.76                                          , 9.15                                          , 2.29                                          
+P10     , 2301 -- 2400   , 0.65                                       , 0.79                                       , 1.14                                       , 1.15                                       , 0.00                                       , 0.00                                       , 0.01                                       , 0.01                                       , 696.41                                        , 855.19                                        , 1229.87                                       , 1242.04                                       , 4.50                                          , 1.68                                          , 12.15                                         , 14.04                                         
+P11     , 2201 -- 2300   , 0.03                                       , 0.02                                       , 0.16                                       , 0.30                                       , 0.00                                       , 0.01                                       , 0.00                                       , 0.01                                       , 33.32                                         , 19.23                                         , 176.26                                        , 325.87                                        , 1.34                                          , 12.77                                         , 0.00                                          , 7.31                                          
+P12     , 2101 -- 2200   , 0.03                                       , 0.02                                       , 0.01                                       , 0.04                                       , 0.06                                       , 0.01                                       , 0.01                                       , 0.01                                       , 28.57                                         , 17.36                                         , 7.07                                          , 39.85                                         , 62.53                                         , 11.35                                         , 8.77                                          , 9.37                                          
+P13     , 2001 -- 2100   , 0.02                                       , 0.01                                       , 0.01                                       , 0.02                                       , 0.01                                       , 0.00                                       , 0.00                                       , 0.00                                       , 26.54                                         , 14.40                                         , 9.53                                          , 23.22                                         , 15.67                                         , 2.01                                          , 0.30                                          , 0.00                                          
+P14     , 1901 -- 2000   , 0.02                                       , 0.03                                       , 0.02                                       , 0.02                                       , 0.00                                       , 0.03                                       , 0.00                                       , 0.00                                       , 24.07                                         , 30.33                                         , 20.88                                         , 19.04                                         , 5.36                                          , 29.88                                         , 1.29                                          , 0.00                                          
+P15     , 1801 -- 1900   , 0.02                                       , 0.01                                       , 0.03                                       , 0.02                                       , 0.03                                       , 0.00                                       , 0.01                                       , 0.00                                       , 18.45                                         , 10.83                                         , 37.07                                         , 22.12                                         , 28.57                                         , 0.00                                          , 9.55                                          , 0.35                                          
+P16     , 1701 -- 1800   , 0.01                                       , 0.01                                       , 0.01                                       , 0.03                                       , 0.00                                       , 0.02                                       , 0.00                                       , 0.01                                       , 7.15                                          , 9.34                                          , 14.48                                         , 34.29                                         , 0.57                                          , 22.98                                         , 0.77                                          , 9.86                                          
+P17     , 1601 -- 1700   , 0.07                                       , 0.01                                       , 0.02                                       , 0.01                                       , 0.02                                       , 0.02                                       , 0.03                                       , 0.02                                       , 73.65                                         , 12.63                                         , 22.61                                         , 8.47                                          , 20.31                                         , 21.59                                         , 28.74                                         , 26.66                                         
+P18     , 1501 -- 1600   , 0.07                                       , 0.01                                       , 0.05                                       , 0.03                                       , 0.02                                       , 0.00                                       , 0.02                                       , 0.00                                       , 77.87                                         , 10.56                                         , 49.89                                         , 29.31                                         , 22.92                                         , 1.22                                          , 16.37                                         , 1.58                                          
+P19     , 1401 -- 1500   , 0.10                                       , 0.10                                       , 0.05                                       , 0.07                                       , 0.00                                       , 0.00                                       , 0.01                                       , 0.01                                       , 113.17                                        , 105.54                                        , 56.72                                         , 77.71                                         , 4.62                                          , 3.10                                          , 7.40                                          , 9.69                                          
+P20     , 1301 -- 1400   , 0.06                                       , 0.09                                       , 0.05                                       , 0.05                                       , 0.01                                       , 0.01                                       , 0.01                                       , 0.01                                       , 65.15                                         , 96.60                                         , 55.24                                         , 49.89                                         , 14.22                                         , 7.88                                          , 5.51                                          , 7.84                                          
+P21     , 1201 -- 1300   , 0.02                                       , 0.04                                       , 0.02                                       , 0.03                                       , 0.01                                       , 0.00                                       , 0.00                                       , 0.00                                       , 26.58                                         , 42.87                                         , 25.24                                         , 28.98                                         , 6.76                                          , 2.88                                          , 0.00                                          , 1.28                                          
+P22     , 1101 -- 1200   , 0.01                                       , 0.00                                       , 0.01                                       , 0.00                                       , 0.02                                       , 0.02                                       , 0.02                                       , 0.02                                       , 7.17                                          , 0.34                                          , 12.55                                         , 4.65                                          , 19.91                                         , 18.83                                         , 17.13                                         , 24.88                                         
+P23     , 1001 -- 1100   , 0.00                                       , 0.00                                       , 0.01                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                          , 0.00                                          , 6.22                                          , 4.80                                          , 2.33                                          , 0.00                                          , 0.00                                          , 4.09                                          
+P24     , 901 -- 1000    , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 2.73                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.24                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P25     , 801 -- 900     , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 1.51                                          , 0.00                                          , 0.00                                          , 0.00                                          , 1.03                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P26     , 701 -- 800     , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P27     , 601 -- 700     , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P28     , 501 -- 600     , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P29     , 401 -- 500     , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+P30     , <= 400         , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                       , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          , 0.00                                          
+CPU Idle, 0              , 66.50                                      , 60.33                                      , 58.57                                      , 71.76                                      , 92.78                                      , 93.35                                      , 92.04                                      , 88.63                                      , 71735.12                                      , 65074.44                                      , 63179.52                                      , 77404.21                                      , 100078.91                                     , 100693.33                                     , 99280.78                                      , 95603.89                                      
+
+CPU P-State/Frequency Summary: Total Samples Received
+CPU ID                       , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------                       , ------------------, ----------------------------, ----------------------------, ----------------------------
+CPU/Package_0/Core_0/Thread_0, 1024              , 0.09                        , 505.74                      , 105.25                      
+CPU/Package_0/Core_1/Thread_1, 1063              , 0.09                        , 515.93                      , 101.46                      
+CPU/Package_0/Core_2/Thread_2, 1076              , 0.09                        , 496.77                      , 100.05                      
+CPU/Package_0/Core_3/Thread_3, 1038              , 0.02                        , 368.93                      , 103.75                      
+CPU/Package_0/Core_4/Thread_4, 337               , 0.08                        , 3047.44                     , 319.68                      
+CPU/Package_0/Core_5/Thread_5, 428               , 0.07                        , 2467.23                     , 250.75                      
+CPU/Package_0/Core_6/Thread_6, 396               , 15.13                       , 2180.77                     , 269.38                      
+CPU/Package_0/Core_7/Thread_7, 440               , 0.08                        , 2163.00                     , 235.36                      
+
+=========================================
+HWP Capabilities - Guaranteed-Performance
+=========================================
+
+HWP Capabilities - Guaranteed-Performance Summary - Sampled: Min/Max/Avg
+Thread                       , Min , Max , Avg    , Time-weighted Avg
+------                       , --- , --- , ---    , -----------------
+CPU/Package_0/Core_0/Thread_0, 3800, 3800, 3800.00, 3800.00          
+CPU/Package_0/Core_1/Thread_1, 3800, 3800, 3800.00, 3800.00          
+CPU/Package_0/Core_2/Thread_2, 3800, 3800, 3800.00, 3800.00          
+CPU/Package_0/Core_3/Thread_3, 3800, 3800, 3800.00, 3800.00          
+CPU/Package_0/Core_4/Thread_4, 3300, 3300, 3300.00, 3300.00          
+CPU/Package_0/Core_5/Thread_5, 3300, 3300, 3300.00, 3300.00          
+CPU/Package_0/Core_6/Thread_6, 3300, 3300, 3300.00, 3300.00          
+CPU/Package_0/Core_7/Thread_7, 3300, 3300, 3300.00, 3300.00          
+
+======================================
+HWP Capabilities - Highest-Performance
+======================================
+
+HWP Capabilities - Highest-Performance Summary - Sampled: Min/Max/Avg
+Thread                       , Min , Max , Avg    , Time-weighted Avg
+------                       , --- , --- , ---    , -----------------
+CPU/Package_0/Core_0/Thread_0, 5800, 5800, 5800.00, 5800.00          
+CPU/Package_0/Core_1/Thread_1, 5900, 5900, 5900.00, 5900.00          
+CPU/Package_0/Core_2/Thread_2, 5800, 5800, 5800.00, 5800.00          
+CPU/Package_0/Core_3/Thread_3, 5800, 5800, 5800.00, 5800.00          
+CPU/Package_0/Core_4/Thread_4, 3700, 3700, 3700.00, 3700.00          
+CPU/Package_0/Core_5/Thread_5, 3700, 3700, 3700.00, 3700.00          
+CPU/Package_0/Core_6/Thread_6, 3700, 3700, 3700.00, 3700.00          
+CPU/Package_0/Core_7/Thread_7, 3700, 3700, 3700.00, 3700.00          
+
+=====================================
+HWP Capabilities - Lowest-Performance
+=====================================
+
+HWP Capabilities - Lowest-Performance Summary - Sampled: Min/Max/Avg
+Thread                       , Min, Max, Avg   , Time-weighted Avg
+------                       , ---, ---, ---   , -----------------
+CPU/Package_0/Core_0/Thread_0, 100, 100, 100.00, 100.00           
+CPU/Package_0/Core_1/Thread_1, 100, 100, 100.00, 100.00           
+CPU/Package_0/Core_2/Thread_2, 100, 100, 100.00, 100.00           
+CPU/Package_0/Core_3/Thread_3, 100, 100, 100.00, 100.00           
+CPU/Package_0/Core_4/Thread_4, 100, 100, 100.00, 100.00           
+CPU/Package_0/Core_5/Thread_5, 100, 100, 100.00, 100.00           
+CPU/Package_0/Core_6/Thread_6, 100, 100, 100.00, 100.00           
+CPU/Package_0/Core_7/Thread_7, 100, 100, 100.00, 100.00           
+
+=============================================
+HWP Capabilities - Most-Efficient-Performance
+=============================================
+
+HWP Capabilities - Most-Efficient-Performance Summary - Sampled: Min/Max/Avg
+Thread                       , Min, Max , Avg    , Time-weighted Avg
+------                       , ---, --- , ---    , -----------------
+CPU/Package_0/Core_0/Thread_0, 500, 2800, 1904.10, 1901.64          
+CPU/Package_0/Core_1/Thread_1, 500, 2600, 1903.57, 1900.75          
+CPU/Package_0/Core_2/Thread_2, 500, 2600, 1901.95, 1895.54          
+CPU/Package_0/Core_3/Thread_3, 500, 2600, 1906.36, 1903.11          
+CPU/Package_0/Core_4/Thread_4, 900, 2500, 1821.07, 1761.83          
+CPU/Package_0/Core_5/Thread_5, 900, 2400, 1777.57, 1781.27          
+CPU/Package_0/Core_6/Thread_6, 900, 2400, 1818.89, 1789.51          
+CPU/Package_0/Core_7/Thread_7, 900, 2400, 1869.77, 1781.16          
+
+==============================
+Package P-State/Frequency (OS)
+==============================
+
+Package P-State/Frequency (OS) Summary: Residency (Percentage and Time)
+Frequency(Mhz), CPU/Package_0 Residency (%), CPU/Package_0 Residency (msec)
+--------------, ---------------------------, ------------------------------
+3300          , 88.55                      , 95739.11                      
+0             , 11.45                      , 12374.86                      
+
+Package P-State/Frequency (OS) Summary: Entry Counts
+Frequency(Mhz), CPU/Package_0 Entry Count
+--------------, -------------------------
+3300          , 51886                    
+0             , 51073                    
+Total         , 102959                   
+
+===========================
+Core P-State/Frequency (OS)
+===========================
+
+Core P-State/Frequency (OS) Summary: Residency (Percentage and Time)
+Frequency(Mhz), CPU/Package_0/Core_0 Residency (%), CPU/Package_0/Core_1 Residency (%), CPU/Package_0/Core_2 Residency (%), CPU/Package_0/Core_3 Residency (%), CPU/Package_0/Core_4 Residency (%), CPU/Package_0/Core_5 Residency (%), CPU/Package_0/Core_6 Residency (%), CPU/Package_0/Core_7 Residency (%), CPU/Package_0/Core_0 Residency (msec), CPU/Package_0/Core_1 Residency (msec), CPU/Package_0/Core_2 Residency (msec), CPU/Package_0/Core_3 Residency (msec), CPU/Package_0/Core_4 Residency (msec), CPU/Package_0/Core_5 Residency (msec), CPU/Package_0/Core_6 Residency (msec), CPU/Package_0/Core_7 Residency (msec)
+--------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, ----------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------, -------------------------------------
+3300          , 32.48                             , 38.52                             , 40.19                             , 27.18                             , 6.76                              , 6.20                              , 7.48                              , 10.89                             , 35112.29                             , 41642.97                             , 43445.99                             , 29390.20                             , 7304.44                              , 6698.34                              , 8082.86                              , 11775.85                             
+0             , 67.52                             , 61.48                             , 59.81                             , 72.82                             , 93.24                             , 93.80                             , 92.52                             , 89.11                             , 73001.69                             , 66471.00                             , 64667.98                             , 78723.78                             , 100809.53                            , 101415.64                            , 100031.11                            , 96338.12                             
+
+Core P-State/Frequency (OS) Summary: Entry Counts
+Frequency(Mhz), CPU/Package_0/Core_0 Entry Count, CPU/Package_0/Core_1 Entry Count, CPU/Package_0/Core_2 Entry Count, CPU/Package_0/Core_3 Entry Count, CPU/Package_0/Core_4 Entry Count, CPU/Package_0/Core_5 Entry Count, CPU/Package_0/Core_6 Entry Count, CPU/Package_0/Core_7 Entry Count
+--------------, --------------------------------, --------------------------------, --------------------------------, --------------------------------, --------------------------------, --------------------------------, --------------------------------, --------------------------------
+3300          , 199910                          , 298076                          , 313512                          , 224359                          , 17268                           , 16152                           , 15310                           , 16034                           
+0             , 199911                          , 298074                          , 313511                          , 224358                          , 17267                           , 16151                           , 15309                           , 16034                           
+Total         , 399821                          , 596150                          , 627023                          , 448717                          , 34535                           , 32303                           , 30619                           , 32068                           
+
+=============================
+Thread P-State/Frequency (OS)
+=============================
+
+Thread P-State/Frequency (OS) Summary: Residency (Percentage and Time)
+Frequency(Mhz), CPU/Package_0/Core_0/Thread_0 Residency (%), CPU/Package_0/Core_1/Thread_1 Residency (%), CPU/Package_0/Core_2/Thread_2 Residency (%), CPU/Package_0/Core_3/Thread_3 Residency (%), CPU/Package_0/Core_4/Thread_4 Residency (%), CPU/Package_0/Core_5/Thread_5 Residency (%), CPU/Package_0/Core_6/Thread_6 Residency (%), CPU/Package_0/Core_7/Thread_7 Residency (%), CPU/Package_0/Core_0/Thread_0 Residency (msec), CPU/Package_0/Core_1/Thread_1 Residency (msec), CPU/Package_0/Core_2/Thread_2 Residency (msec), CPU/Package_0/Core_3/Thread_3 Residency (msec), CPU/Package_0/Core_4/Thread_4 Residency (msec), CPU/Package_0/Core_5/Thread_5 Residency (msec), CPU/Package_0/Core_6/Thread_6 Residency (msec), CPU/Package_0/Core_7/Thread_7 Residency (msec)
+--------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, -------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------, ----------------------------------------------
+3300          , 32.48                                      , 38.52                                      , 40.19                                      , 27.18                                      , 6.76                                       , 6.20                                       , 7.48                                       , 10.89                                      , 35112.29                                      , 41642.97                                      , 43445.99                                      , 29390.20                                      , 7304.44                                       , 6698.34                                       , 8082.86                                       , 11775.85                                      
+0             , 67.52                                      , 61.48                                      , 59.81                                      , 72.82                                      , 93.24                                      , 93.80                                      , 92.52                                      , 89.11                                      , 73001.69                                      , 66471.00                                      , 64667.98                                      , 78723.78                                      , 100809.53                                     , 101415.64                                     , 100031.11                                     , 96338.12                                      
+
+Thread P-State/Frequency (OS) Summary: Entry Counts
+Frequency(Mhz), CPU/Package_0/Core_0/Thread_0 Entry Count, CPU/Package_0/Core_1/Thread_1 Entry Count, CPU/Package_0/Core_2/Thread_2 Entry Count, CPU/Package_0/Core_3/Thread_3 Entry Count, CPU/Package_0/Core_4/Thread_4 Entry Count, CPU/Package_0/Core_5/Thread_5 Entry Count, CPU/Package_0/Core_6/Thread_6 Entry Count, CPU/Package_0/Core_7/Thread_7 Entry Count
+--------------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------, -----------------------------------------
+3300          , 199910                                   , 298076                                   , 313512                                   , 224359                                   , 17268                                    , 16152                                    , 15310                                    , 16034                                    
+0             , 199911                                   , 298074                                   , 313511                                   , 224358                                   , 17267                                    , 16151                                    , 15309                                    , 16034                                    
+Total         , 399821                                   , 596150                                   , 627023                                   , 448717                                   , 34535                                    , 32303                                    , 30619                                    , 32068                                    
+
+============================
+Integrated Graphics C-State 
+============================
+
+Integrated Graphics C-State  Summary: Residency (Percentage and Time)
+C-State, iGPU/Graphics Residency (%), iGPU/Graphics Residency (msec)
+-------, ---------------------------, ------------------------------
+RC0    , 79.66                      , 85927.51                      
+RC6    , 20.34                      , 21939.00                      
+
+Integrated Graphics C-State  Summary: Total Samples Received
+Integrated Graphics IP blocks, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+-----------------------------, ------------------, ----------------------------, ----------------------------, ----------------------------
+iGPU/Graphics                , 1149              , 71.79                       , 277.89                      , 93.86                       
+
+======================================
+Integrated Graphics Slice Concurrency 
+======================================
+
+Note: 0 slice active time includes both time when GT is powered off (RC6 or not yet booted) and GT is in RC0 but no slices are active.
+
+Integrated Graphics Slice Concurrency  Summary: Residency (Percentage and Time)
+# Active Slices, iGPU/Graphics Residency (%), iGPU/Graphics Residency (msec)
+---------------, ---------------------------, ------------------------------
+0              , 70.71                      , 76275.03                      
+2              , 9.66                       , 10424.37                      
+1              , 10.41                      , 11224.45                      
+3              , 9.22                       , 9942.66                       
+
+Integrated Graphics Slice Concurrency  Summary: Total Samples Received
+Integrated Graphics IP blocks, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+-----------------------------, ------------------, ----------------------------, ----------------------------, ----------------------------
+iGPU/Graphics                , 1149              , 71.79                       , 277.89                      , 93.86                       
+
+==========================================
+Integrated Graphics C-State Entrance Count
+==========================================
+
+Integrated Graphics C-State Entrance Count Summary: Total
+     , State, Total (Count)
+     , -----, -------------
+     , RC6  , 46.00        
+Total,      , 46.00        
+
+Integrated Graphics C-State Entrance Count Summary: Total Samples Received
+, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+, ------------------, ----------------------------, ----------------------------, ----------------------------
+, 1149              , 71.09                       , 277.91                      , 93.86                       
+
+==========================
+Graphics Active State (OS)
+==========================
+
+Graphics Active State (OS) Summary: Residency (Percentage and Time)
+State ,  Residency (%),  Residency (msec)
+----- , --------------, -----------------
+Active, 0.00          , 0.00             
+Idle  , 100.00        , 108117.09        
+
+Graphics Active State (OS) Summary: Entry Counts
+State ,  Entry Count
+----- , ------------
+Active, 0           
+Idle  , 1           
+Total , 1           
+
+Total wakeups :0
+Wakeup rate (wakeups/sec):0
+
+=================================
+Integrated GPU Throttling Reasons
+=================================
+
+Integrated GPU Throttling Reasons Summary - Sampled: Counts
+                     , Not Reason, Reason
+                     , ----------, ------
+PROCHOT              , 1150      , 0     
+THERMAL              , 1150      , 0     
+RSVD2                , 1150      , 0     
+RSVD3                , 1150      , 0     
+RSVD4                , 1150      , 0     
+RATL                 , 1150      , 0     
+VR-THERMAL-ALERT     , 1150      , 0     
+VR-TDC               , 1150      , 0     
+OTHER                , 1150      , 0     
+RSVD9                , 1150      , 0     
+PBM-PL1              , 1150      , 0     
+PBM-PL2              , 1150      , 0     
+INEFFICIENT-OPERATION, 1150      , 0     
+RSVD13               , 1150      , 0     
+RSVD14               , 1150      , 0     
+RSVD15               , 1150      , 0     
+
+Integrated GPU Throttling Reasons Summary - Sampled: Total Samples Received
+                     , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+                     , ------------------, ----------------------------, ----------------------------, ----------------------------
+PROCHOT              , 1150              , 71.79                       , 277.89                      , 93.88                       
+THERMAL              , 1150              , 71.79                       , 277.89                      , 93.88                       
+RSVD2                , 1150              , 71.79                       , 277.89                      , 93.88                       
+RSVD3                , 1150              , 71.79                       , 277.89                      , 93.88                       
+RSVD4                , 1150              , 71.79                       , 277.89                      , 93.88                       
+RATL                 , 1150              , 71.79                       , 277.89                      , 93.88                       
+VR-THERMAL-ALERT     , 1150              , 71.79                       , 277.89                      , 93.88                       
+VR-TDC               , 1150              , 71.79                       , 277.89                      , 93.88                       
+OTHER                , 1150              , 71.79                       , 277.89                      , 93.88                       
+RSVD9                , 1150              , 71.79                       , 277.89                      , 93.88                       
+PBM-PL1              , 1150              , 71.79                       , 277.89                      , 93.88                       
+PBM-PL2              , 1150              , 71.79                       , 277.89                      , 93.88                       
+INEFFICIENT-OPERATION, 1150              , 71.79                       , 277.89                      , 93.88                       
+RSVD13               , 1150              , 71.79                       , 277.89                      , 93.88                       
+RSVD14               , 1150              , 71.79                       , 277.89                      , 93.88                       
+RSVD15               , 1150              , 71.79                       , 277.89                      , 93.88                       
+
+===================================
+DDR Bandwidth Requests by Component
+===================================
+
+Note: A partial request increments the request count. However partial requests occurring on the same cache line are combined into a single transfer.
+Therefore the bandwidth shown (#Requests * (scaleFactor) / time) may be higher than actual bandwidth (#Requests includes every read & write request).
+
+DDR Bandwidth Requests by Component Summary: Average Rate and Total
+Device, Event                , Average Rate (MB/s), Total (bytes)   
+------, -----                , -------------------, -------------   
+DDR   , MC0-CH0-SUBCH0-READS , 4665.55            , 503609895392.00 
+DDR   , MC0-CH0-SUBCH0-WRITES, 148.21             , 15997858368.00  
+DDR   , MC0-CH0-SUBCH1-READS , 4665.56            , 503611263200.00 
+DDR   , MC0-CH0-SUBCH1-WRITES, 147.62             , 15934105536.00  
+DDR   , MC0-CH1-SUBCH0-READS , 4668.62            , 503941491072.00 
+DDR   , MC0-CH1-SUBCH0-WRITES, 147.91             , 15965658304.00  
+DDR   , MC0-CH1-SUBCH1-READS , 4672.52            , 504362457216.00 
+DDR   , MC0-CH1-SUBCH1-WRITES, 147.68             , 15941243616.00  
+DDR   , MC1-CH0-SUBCH0-READS , 4663.96            , 503439118176.00 
+DDR   , MC1-CH0-SUBCH0-WRITES, 147.98             , 15973317024.00  
+DDR   , MC1-CH0-SUBCH1-READS , 4664.69            , 503517862144.00 
+DDR   , MC1-CH0-SUBCH1-WRITES, 147.50             , 15921654112.00  
+DDR   , MC1-CH1-SUBCH0-READS , 4703.21            , 507675657920.00 
+DDR   , MC1-CH1-SUBCH0-WRITES, 147.92             , 15967104672.00  
+DDR   , MC1-CH1-SUBCH1-READS , 4665.68            , 503624292384.00 
+DDR   , MC1-CH1-SUBCH1-WRITES, 147.61             , 15932981472.00  
+Total ,                      , 38552.22           , 4161415960608.00
+
+DDR Bandwidth Requests by Component Summary: Total Samples Received
+Device, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------, ------------------, ----------------------------, ----------------------------, ----------------------------
+DDR   , 1149              , 71.79                       , 277.89                      , 93.86                       
+
+============
+IO Bandwidth
+============
+
+IO Bandwidth Summary: Average Rate and Total
+     , Event         , Average Rate (MB/s), Total (bytes)
+     , -----         , -------------------, -------------
+     , Total-BW-Read , 4.93               , 532201068.00 
+     , Total-BW-Write, 0.01               , 1166885.00   
+     , Ace-BW-Read   , 0.00               , 0.00         
+     , Ace-BW-Write  , 0.00               , 0.00         
+     , PSF12-BW-Read , 4.93               , 532184608.00 
+     , PSF12-BW-Write, 0.00               , 84764.00     
+     , PSF4-BW-Read  , 0.00               , 0.00         
+     , PSF4-BW-Write , 0.00               , 0.00         
+     , PSF6-BW-Read  , 0.01               , 915056.00    
+     , PSF6-BW-Write , 0.00               , 251829.00    
+Total,               , 9.89               , 1066804210.00
+
+IO Bandwidth Summary: Total Samples Received
+, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+, ------------------, ----------------------------, ----------------------------, ----------------------------
+, 1149              , 71.79                       , 277.89                      , 93.86                       
+
+=====================
+Display VC1 Bandwidth
+=====================
+
+Display VC1 Bandwidth Summary: Average Rate and Total
+Device, Event            , Average Rate (MB/s), Total (bytes)
+------, -----            , -------------------, -------------
+      , DISPLAY-VC1-READS, 1.89               , 204421248.00 
+Total ,                  , 1.89               , 204421248.00 
+
+Display VC1 Bandwidth Summary: Total Samples Received
+Device, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------, ------------------, ----------------------------, ----------------------------, ----------------------------
+      , 1149              , 71.10                       , 277.91                      , 93.86                       
+
+================================================
+Neural Processing Unit (NPU) to Memory Bandwidth
+================================================
+
+Note: Bandwidth reflects DMA traffic generated during inferences.
+
+Neural Processing Unit (NPU) to Memory Bandwidth Summary: Average Rate and Total
+Device, Event           , Average Rate (MB/s), Total (bytes)
+------, -----           , -------------------, -------------
+      , NPU-READS-WRITES, 0.00               , 0.00         
+Total ,                 , 0.00               , 0.00         
+
+Neural Processing Unit (NPU) to Memory Bandwidth Summary: Total Samples Received
+Device, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------, ------------------, ----------------------------, ----------------------------, ----------------------------
+      , 1149              , 71.80                       , 277.91                      , 93.86                       
+
+========================================
+Media to Network on Chip (NoC) Bandwidth
+========================================
+
+Media to Network on Chip (NoC) Bandwidth Summary: Average Rate and Total
+Device, Event           , Average Rate (MB/s), Total (bytes)
+------, -----           , -------------------, -------------
+      , NOC-MEDIA-READS , 0.00               , 0.00         
+      , NOC-MEDIA-WRITES, 0.00               , 0.00         
+Total ,                 , 0.00               , 0.00         
+
+Media to Network on Chip (NoC) Bandwidth Summary: Total Samples Received
+Device, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------, ------------------, ----------------------------, ----------------------------, ----------------------------
+      , 1149              , 71.11                       , 277.91                      , 93.86                       
+
+==============================================================
+Image Processing Unit (IPU) to Network on Chip (NoC) Bandwidth
+==============================================================
+
+Image Processing Unit (IPU) to Network on Chip (NoC) Bandwidth Summary: Average Rate and Total
+Device, Event         , Average Rate (MB/s), Total (bytes)
+------, -----         , -------------------, -------------
+      , NOC-IPU-READS , 0.00               , 0.00         
+      , NOC-IPU-WRITES, 0.00               , 0.00         
+Total ,               , 0.00               , 0.00         
+
+Image Processing Unit (IPU) to Network on Chip (NoC) Bandwidth Summary: Total Samples Received
+Device, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------, ------------------, ----------------------------, ----------------------------, ----------------------------
+      , 1149              , 71.11                       , 277.91                      , 93.86                       
+
+======================================
+CCE to Network on Chip (NoC) Bandwidth
+======================================
+
+CCE to Network on Chip (NoC) Bandwidth Summary: Average Rate and Total
+Device, Event   , Average Rate (MB/s), Total (bytes)
+------, -----   , -------------------, -------------
+      , NOC-CCE0, 0.00               , 0.00         
+      , NOC-CCE1, 0.00               , 0.00         
+Total ,         , 0.00               , 0.00         
+
+CCE to Network on Chip (NoC) Bandwidth Summary: Total Samples Received
+Device, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------, ------------------, ----------------------------, ----------------------------, ----------------------------
+      , 1149              , 71.10                       , 277.91                      , 93.86                       
+
+============================
+Network on Chip GT Bandwidth
+============================
+
+Network on Chip GT Bandwidth Summary: Average Rate and Total
+Device, Event        , Average Rate (MB/s), Total (bytes)   
+------, -----        , -------------------, -------------   
+      , NOC-GT-READS , 34771.93           , 3753364839040.00
+      , NOC-GT-WRITES, 456.65             , 49292418208.00  
+Total ,              , 35228.59           , 3802657257248.00
+
+Network on Chip GT Bandwidth Summary: Total Samples Received
+Device, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------, ------------------, ----------------------------, ----------------------------, ----------------------------
+      , 1149              , 71.10                       , 277.91                      , 93.86                       
+
+====================================
+Network on Chip Die to Die Bandwidth
+====================================
+
+Network on Chip Die to Die Bandwidth Summary: Average Rate and Total
+Device, Event         , Average Rate (MB/s), Total (bytes)
+------, -----         , -------------------, -------------
+      , NOC-D2D-READS , 0.06               , 6819712.00   
+      , NOC-D2D-WRITES, 12.36              , 1334194240.00
+Total ,               , 12.42              , 1341013952.00
+
+Network on Chip Die to Die Bandwidth Summary: Total Samples Received
+Device, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------, ------------------, ----------------------------, ----------------------------, ----------------------------
+      , 1149              , 71.10                       , 277.91                      , 93.86                       
+
+========================
+Cluster1 Cores Bandwidth
+========================
+
+Cluster1 Cores Bandwidth Summary: Average Rate and Total
+Device, Event     , Average Rate (MB/s), Total (bytes) 
+------, -----     , -------------------, ------------- 
+      , IDI-READS , 510.68             , 55124524736.00
+      , IDI-WRITES, 312.78             , 33762145536.00
+Total ,           , 823.46             , 88886670272.00
+
+Cluster1 Cores Bandwidth Summary: Total Samples Received
+Device, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+------, ------------------, ----------------------------, ----------------------------, ----------------------------
+      , 1149              , 71.09                       , 277.91                      , 93.86                       
+
+===================
+Temperature Metrics
+===================
+
+Temperature Metrics Summary - Sampled: Min/Max/Avg
+                    , Min (oC), Max (oC), Avg (oC), Time-weighted Avg (oC)
+                    , --------, --------, --------, ----------------------
+CPU/Package_0/Core_0, 35      , 69      , 49.75   , 48.93                 
+CPU/Package_0/Core_1, 34      , 67      , 47.04   , 46.82                 
+CPU/Package_0/Core_2, 33      , 77      , 53.83   , 52.77                 
+CPU/Package_0/Core_3, 35      , 63      , 48.39   , 47.76                 
+CPU/Package_0/Core_4, 35      , 52      , 43.75   , 42.63                 
+CPU/Package_0/Core_5, 35      , 51      , 42.54   , 42.67                 
+CPU/Package_0/Core_6, 35      , 49      , 43.23   , 42.61                 
+CPU/Package_0/Core_7, 35      , 52      , 44.45   , 42.67                 
+
+Temperature Metrics Summary - Sampled: Counts
+Temperature (oC), CPU/Package_0/Core_0, CPU/Package_0/Core_1, CPU/Package_0/Core_2, CPU/Package_0/Core_3, CPU/Package_0/Core_4, CPU/Package_0/Core_5, CPU/Package_0/Core_6, CPU/Package_0/Core_7
+----------------, --------------------, --------------------, --------------------, --------------------, --------------------, --------------------, --------------------, --------------------
+33              , 0                   , 0                   , 2                   , 0                   , 0                   , 0                   , 0                   , 0                   
+34              , 0                   , 3                   , 12                  , 0                   , 0                   , 0                   , 0                   , 0                   
+35              , 25                  , 13                  , 24                  , 11                  , 9                   , 6                   , 4                   , 3                   
+36              , 10                  , 31                  , 1                   , 24                  , 7                   , 7                   , 5                   , 4                   
+37              , 3                   , 4                   , 2                   , 3                   , 11                  , 6                   , 5                   , 3                   
+38              , 6                   , 3                   , 6                   , 6                   , 22                  , 25                  , 18                  , 15                  
+39              , 8                   , 6                   , 26                  , 2                   , 5                   , 17                  , 6                   , 6                   
+40              , 15                  , 45                  , 15                  , 17                  , 10                  , 32                  , 20                  , 14                  
+41              , 24                  , 54                  , 15                  , 20                  , 30                  , 94                  , 58                  , 39                  
+42              , 35                  , 61                  , 11                  , 48                  , 16                  , 43                  , 29                  , 19                  
+43              , 31                  , 68                  , 21                  , 47                  , 19                  , 55                  , 40                  , 22                  
+44              , 50                  , 55                  , 9                   , 60                  , 25                  , 23                  , 92                  , 56                  
+45              , 54                  , 92                  , 35                  , 80                  , 44                  , 20                  , 27                  , 63                  
+46              , 66                  , 76                  , 37                  , 64                  , 63                  , 47                  , 39                  , 98                  
+47              , 77                  , 91                  , 31                  , 81                  , 37                  , 27                  , 33                  , 51                  
+48              , 95                  , 65                  , 42                  , 76                  , 16                  , 16                  , 15                  , 24                  
+49              , 71                  , 70                  , 35                  , 78                  , 18                  , 8                   , 6                   , 18                  
+50              , 46                  , 45                  , 48                  , 77                  , 4                   , 1                   , 0                   , 3                   
+51              , 48                  , 56                  , 47                  , 66                  , 0                   , 1                   , 0                   , 1                   
+52              , 48                  , 51                  , 46                  , 65                  , 1                   , 0                   , 0                   , 1                   
+53              , 36                  , 32                  , 46                  , 38                  , 0                   , 0                   , 0                   , 0                   
+54              , 34                  , 38                  , 46                  , 43                  , 0                   , 0                   , 0                   , 0                   
+55              , 34                  , 30                  , 40                  , 23                  , 0                   , 0                   , 0                   , 0                   
+56              , 29                  , 23                  , 50                  , 15                  , 0                   , 0                   , 0                   , 0                   
+57              , 19                  , 16                  , 52                  , 26                  , 0                   , 0                   , 0                   , 0                   
+58              , 28                  , 13                  , 42                  , 22                  , 0                   , 0                   , 0                   , 0                   
+59              , 28                  , 8                   , 47                  , 19                  , 0                   , 0                   , 0                   , 0                   
+60              , 25                  , 6                   , 43                  , 15                  , 0                   , 0                   , 0                   , 0                   
+61              , 22                  , 2                   , 36                  , 3                   , 0                   , 0                   , 0                   , 0                   
+62              , 11                  , 1                   , 28                  , 3                   , 0                   , 0                   , 0                   , 0                   
+63              , 14                  , 1                   , 27                  , 6                   , 0                   , 0                   , 0                   , 0                   
+64              , 10                  , 2                   , 26                  , 0                   , 0                   , 0                   , 0                   , 0                   
+65              , 6                   , 1                   , 30                  , 0                   , 0                   , 0                   , 0                   , 0                   
+66              , 6                   , 0                   , 25                  , 0                   , 0                   , 0                   , 0                   , 0                   
+67              , 6                   , 1                   , 15                  , 0                   , 0                   , 0                   , 0                   , 0                   
+68              , 2                   , 0                   , 20                  , 0                   , 0                   , 0                   , 0                   , 0                   
+69              , 2                   , 0                   , 13                  , 0                   , 0                   , 0                   , 0                   , 0                   
+70              , 0                   , 0                   , 8                   , 0                   , 0                   , 0                   , 0                   , 0                   
+71              , 0                   , 0                   , 8                   , 0                   , 0                   , 0                   , 0                   , 0                   
+72              , 0                   , 0                   , 5                   , 0                   , 0                   , 0                   , 0                   , 0                   
+73              , 0                   , 0                   , 2                   , 0                   , 0                   , 0                   , 0                   , 0                   
+76              , 0                   , 0                   , 1                   , 0                   , 0                   , 0                   , 0                   , 0                   
+77              , 0                   , 0                   , 1                   , 0                   , 0                   , 0                   , 0                   , 0                   
+
+Temperature Metrics Summary - Sampled: Approximated Residency (Percentage)
+Temperature (oC), CPU/Package_0/Core_0 (%), CPU/Package_0/Core_1 (%), CPU/Package_0/Core_2 (%), CPU/Package_0/Core_3 (%), CPU/Package_0/Core_4 (%), CPU/Package_0/Core_5 (%), CPU/Package_0/Core_6 (%), CPU/Package_0/Core_7 (%)
+----------------, ------------------------, ------------------------, ------------------------, ------------------------, ------------------------, ------------------------, ------------------------, ------------------------
+33              , 0.00                    , 0.00                    , 0.26                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+34              , 0.00                    , 0.43                    , 1.94                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+35              , 4.03                    , 1.93                    , 3.56                    , 1.84                    , 5.07                    , 4.78                    , 5.07                    , 6.42                    
+36              , 1.50                    , 3.76                    , 0.12                    , 3.57                    , 1.46                    , 2.14                    , 1.96                    , 0.60                    
+37              , 0.41                    , 0.68                    , 0.42                    , 0.48                    , 2.31                    , 1.81                    , 1.96                    , 1.85                    
+38              , 0.71                    , 0.40                    , 0.76                    , 0.81                    , 3.80                    , 4.77                    , 4.92                    , 4.03                    
+39              , 0.87                    , 0.53                    , 3.17                    , 0.17                    , 3.96                    , 3.11                    , 2.93                    , 3.66                    
+40              , 2.28                    , 4.97                    , 1.79                    , 2.52                    , 7.01                    , 6.52                    , 6.49                    , 7.15                    
+41              , 3.34                    , 4.87                    , 2.05                    , 2.06                    , 14.74                   , 15.49                   , 15.38                   , 14.71                   
+42              , 3.89                    , 6.08                    , 1.20                    , 5.11                    , 8.38                    , 7.37                    , 7.59                    , 8.21                    
+43              , 3.32                    , 6.42                    , 2.11                    , 4.82                    , 7.75                    , 9.28                    , 9.00                    , 8.03                    
+44              , 4.93                    , 5.12                    , 0.85                    , 6.00                    , 13.19                   , 12.85                   , 11.71                   , 11.65                   
+45              , 5.09                    , 8.35                    , 3.31                    , 7.56                    , 8.57                    , 4.86                    , 7.69                    , 7.73                    
+46              , 6.59                    , 6.59                    , 3.35                    , 6.18                    , 12.80                   , 13.91                   , 12.85                   , 12.12                   
+47              , 7.49                    , 8.03                    , 2.89                    , 7.32                    , 6.02                    , 6.97                    , 7.91                    , 8.05                    
+48              , 9.25                    , 5.64                    , 3.91                    , 7.02                    , 2.25                    , 4.45                    , 3.28                    , 3.36                    
+49              , 6.44                    , 5.93                    , 3.12                    , 7.19                    , 2.19                    , 1.48                    , 1.26                    , 1.89                    
+50              , 4.15                    , 3.79                    , 4.26                    , 7.21                    , 0.43                    , 0.12                    , 0.00                    , 0.28                    
+51              , 4.23                    , 4.80                    , 4.15                    , 5.88                    , 0.00                    , 0.09                    , 0.00                    , 0.09                    
+52              , 4.13                    , 4.46                    , 4.06                    , 5.82                    , 0.08                    , 0.00                    , 0.00                    , 0.16                    
+53              , 3.08                    , 2.79                    , 4.39                    , 3.33                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+54              , 2.90                    , 4.23                    , 3.93                    , 3.65                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+55              , 2.88                    , 2.77                    , 3.48                    , 1.97                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+56              , 2.47                    , 2.04                    , 4.28                    , 1.28                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+57              , 1.72                    , 1.43                    , 4.45                    , 2.34                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+58              , 2.45                    , 1.13                    , 3.55                    , 1.89                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+59              , 2.59                    , 0.80                    , 4.01                    , 1.69                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+60              , 2.24                    , 0.66                    , 3.67                    , 1.26                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+61              , 1.98                    , 0.27                    , 3.10                    , 0.26                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+62              , 1.10                    , 0.08                    , 2.39                    , 0.25                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+63              , 1.21                    , 0.15                    , 2.28                    , 0.52                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+64              , 0.89                    , 0.23                    , 2.26                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+65              , 0.51                    , 0.14                    , 2.57                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+66              , 0.50                    , 0.00                    , 2.19                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+67              , 0.50                    , 0.48                    , 1.26                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+68              , 0.17                    , 0.00                    , 1.72                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+69              , 0.17                    , 0.00                    , 1.09                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+70              , 0.00                    , 0.00                    , 0.68                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+71              , 0.00                    , 0.00                    , 0.67                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+72              , 0.00                    , 0.00                    , 0.42                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+73              , 0.00                    , 0.00                    , 0.17                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+76              , 0.00                    , 0.00                    , 0.08                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+77              , 0.00                    , 0.00                    , 0.08                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    , 0.00                    
+
+Temperature Metrics Summary - Sampled: Total Samples Received
+                    , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+                    , ------------------, ----------------------------, ----------------------------, ----------------------------
+CPU/Package_0/Core_0, 1024              , 25.96                       , 505.74                      , 105.44                      
+CPU/Package_0/Core_1, 1063              , 26.31                       , 515.93                      , 101.57                      
+CPU/Package_0/Core_2, 1076              , 71.79                       , 496.77                      , 100.34                      
+CPU/Package_0/Core_3, 1038              , 21.95                       , 368.93                      , 104.02                      
+CPU/Package_0/Core_4, 337               , 16.85                       , 3047.44                     , 321.03                      
+CPU/Package_0/Core_5, 428               , 16.53                       , 2467.23                     , 252.61                      
+CPU/Package_0/Core_6, 397               , 15.13                       , 2180.77                     , 272.39                      
+CPU/Package_0/Core_7, 440               , 19.66                       , 4542.59                     , 245.71                      
+
+=======================
+SoC Domain Temperatures
+=======================
+
+SoC Domain Temperatures Summary - Sampled: Min/Max/Avg
+Component Name, Min (oC), Max (oC), Avg (oC), Time-weighted Avg (oC)
+--------------, --------, --------, --------, ----------------------
+PCH           , 35.0    , 47.0    , 41.82   , 41.70                 
+SA            , 35.0    , 52.0    , 44.68   , 44.48                 
+IPU           , 33.0    , 52.0    , 43.20   , 43.02                 
+DE            , 34.0    , 46.0    , 41.02   , 40.91                 
+NPU           , 35.0    , 46.0    , 41.44   , 41.33                 
+MEDIA         , 34.0    , 46.0    , 42.01   , 41.85                 
+
+SoC Domain Temperatures Summary - Sampled: Total Samples Received
+Component Name, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+--------------, ------------------, ----------------------------, ----------------------------, ----------------------------
+PCH           , 1150              , 71.12                       , 277.91                      , 93.88                       
+SA            , 1150              , 71.12                       , 277.91                      , 93.88                       
+IPU           , 1150              , 71.12                       , 277.91                      , 93.88                       
+DE            , 1150              , 71.12                       , 277.91                      , 93.88                       
+NPU           , 1150              , 71.12                       , 277.91                      , 93.88                       
+MEDIA         , 1150              , 71.12                       , 277.91                      , 93.88                       
+
+==================================
+Neural Processing Unit (NPU) Power
+==================================
+
+Note: NPU energy is an approximation with expected accuracy 70-75% of actual energy.
+
+Neural Processing Unit (NPU) Power Summary: Average Rate and Total
+, Component, Average Rate (mW), Total (mJ)
+, ---------, -----------------, ----------
+, NPU-PWR  , 0.00             , 0.00      
+
+Neural Processing Unit (NPU) Power Summary: Total Samples Received
+, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+, ------------------, ----------------------------, ----------------------------, ----------------------------
+, 1149              , 71.12                       , 277.91                      , 93.86                       
+
+==============================================
+Neural Processing Unit (NPU) D-State Residency
+==============================================
+
+Neural Processing Unit (NPU) D-State Residency Summary: Residency (Percentage and Time)
+State      ,  Residency (%),  Residency (msec)
+-----      , --------------, -----------------
+D0i3/D3    , 100.00        , 107866.50        
+D0 Active  , 0.00          , 0.00             
+D0i2 Active, 0.00          , 0.00             
+D0i2 Idle  , 0.00          , 0.00             
+
+Neural Processing Unit (NPU) D-State Residency Summary: Total Samples Received
+, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+, ------------------, ----------------------------, ----------------------------, ----------------------------
+, 1                 , 107866.50                   , 107866.50                   , 107866.50                   
+
+===================================================
+Neural Processing Unit (NPU) D-State Entrance Count
+===================================================
+
+Neural Processing Unit (NPU) D-State Entrance Count Summary: Total
+     , State      , Total (Count)
+     , -----      , -------------
+     , D0 Active  , 0.00         
+     , D0i2 Active, 0.00         
+     , D0i2 Idle  , 0.00         
+Total,            , 0.00         
+
+Neural Processing Unit (NPU) D-State Entrance Count Summary: Total Samples Received
+, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+, ------------------, ----------------------------, ----------------------------, ----------------------------
+, 1149              , 71.08                       , 277.91                      , 93.86                       
+
+===================
+Display State Entry
+===================
+
+Dynamic Display State Enabling
+--------------------------------------
+Up to DC5 or DC6 enabled (sampled count): 1137
+Up to DC5 enabled (sampled count): 0
+Up to DC6 (including DC5) enabled (sampled count): 1137
+DCx Clock-Off(DCxCO) state allowed by software: Do not allow
+
+
+Display State Entry Summary: Total
+       , Display State, Total (Count)
+       , -------------, -------------
+Display, DC5          , 1143.00      
+Total  ,              , 1143.00      
+
+Display State Entry Summary: Total Samples Received
+       , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+       , ------------------, ----------------------------, ----------------------------, ----------------------------
+Display, 1149              , 71.79                       , 277.89                      , 93.86                       
+
+=======================
+Media C-State Residency
+=======================
+
+Media C-State Residency Summary: Residency (Percentage and Time)
+C-State ,  Residency (%),  Residency (msec)
+------- , --------------, -----------------
+Media-C0, 9.10          , 9812.06          
+Media C6, 90.90         , 98054.44         
+
+Media C-State Residency Summary: Total Samples Received
+, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+, ------------------, ----------------------------, ----------------------------, ----------------------------
+, 1149              , 70.95                       , 277.74                      , 93.86                       
+
+============================
+Media C-State Entrance Count
+============================
+
+Media C-State Entrance Count Summary: Total
+     , State   , Total (Count)
+     , -----   , -------------
+     , Media C6, 17.00        
+Total,         , 17.00        
+
+Media C-State Entrance Count Summary: Total Samples Received
+, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+, ------------------, ----------------------------, ----------------------------, ----------------------------
+, 1149              , 71.09                       , 277.91                      , 93.86                       
+
+====================================
+Neural Processing Unit (NPU) P-State
+====================================
+
+Neural Processing Unit (NPU) P-State Summary - Sampled: Min/Max
+   , Min (MHz), Max (MHz)
+   , ---------, ---------
+NPU, 0.0      , 0.0      
+
+Neural Processing Unit (NPU) P-State Summary - Sampled: Approximated Residency (Percentage)
+Frequency (MHz), NPU (%)
+---------------, -------
+0.0            , 100.00 
+
+Neural Processing Unit (NPU) P-State Summary - Sampled: Counts
+Frequency (MHz), NPU 
+---------------, --- 
+0.0            , 1150
+
+Neural Processing Unit (NPU) P-State Summary - Sampled: Total Samples Received
+   , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+   , ------------------, ----------------------------, ----------------------------, ----------------------------
+NPU, 1150              , 70.94                       , 277.74                      , 93.88                       
+
+================================
+Memory Subsystem (MEMSS) P-State
+================================
+
+Memory Subsystem (MEMSS) P-State Summary - Sampled: Min/Max
+     , Min (MHz), Max (MHz)
+     , ---------, ---------
+MEMSS, 594.0    , 2112.0   
+
+Memory Subsystem (MEMSS) P-State Summary - Sampled: Approximated Residency (Percentage)
+Frequency (MHz), MEMSS (%)
+---------------, ---------
+594.0          , 13.93    
+1188.0         , 0.68     
+1584.0         , 0.76     
+2112.0         , 84.62    
+
+Memory Subsystem (MEMSS) P-State Summary - Sampled: Counts
+Frequency (MHz), MEMSS
+---------------, -----
+594.0          , 128  
+1188.0         , 8    
+1584.0         , 9    
+2112.0         , 1005 
+
+Memory Subsystem (MEMSS) P-State Summary - Sampled: Total Samples Received
+     , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+     , ------------------, ----------------------------, ----------------------------, ----------------------------
+MEMSS, 1150              , 70.94                       , 277.74                      , 93.88                       
+
+=============
+Media P-State
+=============
+
+Media P-State Summary - Sampled: Min/Max
+     , Min (MHz), Max (MHz)
+     , ---------, ---------
+MEDIA, 100.0    , 100.0    
+
+Media P-State Summary - Sampled: Approximated Residency (Percentage)
+Frequency (MHz), MEDIA (%)
+---------------, ---------
+100.0          , 100.00   
+
+Media P-State Summary - Sampled: Counts
+Frequency (MHz), MEDIA
+---------------, -----
+100.0          , 1150 
+
+Media P-State Summary - Sampled: Total Samples Received
+     , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+     , ------------------, ----------------------------, ----------------------------, ----------------------------
+MEDIA, 1150              , 70.93                       , 277.74                      , 93.88                       
+
+=============================
+Network on Chip (NoC) P-State
+=============================
+
+Network on Chip (NoC) P-State Summary - Sampled: Min/Max
+   , Min (MHz), Max (MHz)
+   , ---------, ---------
+NOC, 400.0    , 1050.0   
+
+Network on Chip (NoC) P-State Summary - Sampled: Approximated Residency (Percentage)
+Frequency (MHz), NOC (%)
+---------------, -------
+400.0          , 21.36  
+1050.0         , 78.64  
+
+Network on Chip (NoC) P-State Summary - Sampled: Counts
+Frequency (MHz), NOC
+---------------, ---
+400.0          , 213
+1050.0         , 937
+
+Network on Chip (NoC) P-State Summary - Sampled: Total Samples Received
+   , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+   , ------------------, ----------------------------, ----------------------------, ----------------------------
+NOC, 1150              , 70.93                       , 277.74                      , 93.88                       
+
+====================================
+Neural Processing Unit (NPU) Voltage
+====================================
+
+Neural Processing Unit (NPU) Voltage Summary - Sampled: Min/Max/Avg
+   , Min (mV), Max (mV), Avg (mV), Time-weighted Avg (mV)
+   , --------, --------, --------, ----------------------
+NPU, 0.0     , 718.8   , 0.63    , 0.51                  
+
+Neural Processing Unit (NPU) Voltage Summary - Sampled: Total Samples Received
+   , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+   , ------------------, ----------------------------, ----------------------------, ----------------------------
+NPU, 1150              , 70.93                       , 277.74                      , 93.88                       
+
+===========================
+Integrated Graphics Voltage
+===========================
+
+Integrated Graphics Voltage Summary - Sampled: Min/Max/Avg
+        , Min (mV), Max (mV), Avg (mV), Time-weighted Avg (mV)
+        , --------, --------, --------, ----------------------
+Graphics, 0.0     , 272.5   , 223.20  , 215.42                
+
+Integrated Graphics Voltage Summary - Sampled: Total Samples Received
+        , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+        , ------------------, ----------------------------, ----------------------------, ----------------------------
+Graphics, 1150              , 70.93                       , 277.74                      , 93.88                       
+
+============================
+Last Level Cache Temperature
+============================
+
+Last Level Cache Temperature Summary - Sampled: Min/Max/Avg
+Component Name, Min (oC), Max (oC), Avg (oC), Time-weighted Avg (oC)
+--------------, --------, --------, --------, ----------------------
+LLC           , 34.0    , 50.0    , 44.83   , 44.60                 
+
+Last Level Cache Temperature Summary - Sampled: Total Samples Received
+Component Name, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+--------------, ------------------, ----------------------------, ----------------------------, ----------------------------
+LLC           , 1150              , 71.12                       , 277.91                      , 93.88                       
+
+====================
+Graphics Temperature
+====================
+
+Graphics Temperature Summary - Sampled: Min/Max/Avg
+Component Name, Min (oC), Max (oC), Avg (oC), Time-weighted Avg (oC)
+--------------, --------, --------, --------, ----------------------
+GT            , 35.0    , 47.0    , 42.75   , 42.59                 
+
+Graphics Temperature Summary - Sampled: Total Samples Received
+Component Name, Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+--------------, ------------------, ----------------------------, ----------------------------, ----------------------------
+GT            , 1150              , 71.11                       , 277.91                      , 93.88                       
+
+=====================================
+Integrated Graphics P-State/Frequency
+=====================================
+
+Integrated Graphics P-State/Frequency Summary - Sampled: Min/Max/Avg
+    , Min (MHz), Max (MHz), Avg (MHz), Time-weighted Avg (MHz)
+    , ---------, ---------, ---------, -----------------------
+IGFX, 0.0      , 2050.0   , 1686.26  , 1627.46                
+
+Integrated Graphics P-State/Frequency Summary - Sampled: Approximated Residency (Percentage)
+Frequency (MHz), IGFX (%)
+---------------, --------
+0.0            , 20.61   
+1950.0         , 0.08    
+2050.0         , 79.31   
+
+Integrated Graphics P-State/Frequency Summary - Sampled: Counts
+Frequency (MHz), IGFX
+---------------, ----
+0.0            , 204 
+1950.0         , 1   
+2050.0         , 945 
+
+Integrated Graphics P-State/Frequency Summary - Sampled: Total Samples Received
+    , Total # of samples, Min sampling interval (msec), Max sampling interval (msec), Avg sampling interval (msec)
+    , ------------------, ----------------------------, ----------------------------, ----------------------------
+IGFX, 1150              , 70.93                       , 277.74                      , 93.88                       
+
