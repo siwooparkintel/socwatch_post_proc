@@ -90,20 +90,27 @@ class SocWatchProcessor:
         
         # 3. Auto-detection in common locations
         common_paths = [
-            Path("D:/socwatch"),
             Path("C:/socwatch"),
-            Path("D:/SocWatch"),
+            Path("D:/socwatch"),
             Path("C:/SocWatch"),
-            Path("D:/Intel/SocWatch"),
+            Path("D:/SocWatch"),
             Path("C:/Intel/SocWatch"),
+            Path("D:/Intel/SocWatch"),
             Path("C:/Program Files/Intel/SocWatch"),
             Path("C:/Program Files (x86)/Intel/SocWatch"),
         ]
         
         for path in common_paths:
-            if path.exists() and (path / "socwatch.exe").exists():
-                print(f"✅ Auto-detected SocWatch directory: {path}")
-                return path
+            if path.exists():
+                # Check if socwatch.exe exists directly in the path
+                if (path / "socwatch.exe").exists():
+                    print(f"✅ Auto-detected SocWatch directory: {path}")
+                    return path
+                # Check if socwatch.exe exists in any subdirectory
+                for item in path.iterdir():
+                    if item.is_dir() and (item / "socwatch.exe").exists():
+                        print(f"✅ Auto-detected SocWatch directory: {path}")
+                        return path
         
         # 4. Default fallback (original hardcoded path)
         default_path = Path("D:/socwatch")
@@ -483,16 +490,31 @@ class SocWatchProcessor:
         skip_reasons = []
         
         # Check 1: Source directory for existing summary files
-        source_summary_csv = collection_dir / f"{base_name}_summary.csv"
+        # Check for both naming patterns: {base_name}.csv and {base_name}_summary.csv
+        source_summary_csv = collection_dir / f"{base_name}.csv"
+        source_summary_csv_alt = collection_dir / f"{base_name}_summary.csv"
+        source_wakeup_csv = collection_dir / f"{base_name}_WakeupAnalysis.csv"
         source_summary_folder = collection_dir / f"{base_name}_summary"
+        
         if source_summary_csv.exists():
             skip_reasons.append(f"source summary file: {source_summary_csv.name}")
-        elif source_summary_folder.exists() and any(source_summary_folder.glob("*_summary.csv")):
+        elif source_summary_csv_alt.exists():
+            skip_reasons.append(f"source summary file: {source_summary_csv_alt.name}")
+        elif source_wakeup_csv.exists():
+            skip_reasons.append(f"wakeup analysis file: {source_wakeup_csv.name}")
+        elif source_summary_folder.exists() and any(source_summary_folder.glob("*.csv")):
             skip_reasons.append(f"source summary folder: {source_summary_folder.name}")
         
         # Check 2: Output directory (if using custom output)
-        if self.custom_output_dir and summary_csv.exists():
-            skip_reasons.append(f"output summary file: {summary_csv.name}")
+        if self.custom_output_dir:
+            output_summary_csv = collection_output_dir / f"{base_name}.csv"
+            output_wakeup_csv = collection_output_dir / f"{base_name}_WakeupAnalysis.csv"
+            if summary_csv.exists():
+                skip_reasons.append(f"output summary file: {summary_csv.name}")
+            elif output_summary_csv.exists():
+                skip_reasons.append(f"output summary file: {output_summary_csv.name}")
+            elif output_wakeup_csv.exists():
+                skip_reasons.append(f"output wakeup analysis: {output_wakeup_csv.name}")
         elif not self.custom_output_dir and summary_csv.exists():
             skip_reasons.append(f"summary file: {summary_csv.name}")
         
@@ -704,11 +726,11 @@ def main():
         if arg in ['-h', '--help', 'help']:
             print("Usage:")
             print("  python socwatch_pp.py [options] [<input_folder>]")
-            print("\nOptions:")
+            print("Options:")
             print("  -h, --help                    Show this help message")
             print("  --cli                         Force CLI mode (no GUI dialogs)")
             print("  --socwatch-dir <path>         Specify SocWatch installation directory")
-            print("  --output-dir <path>           Specify output directory (default: same as input)")
+            print("  -o, --output-dir <path>       Specify output directory (default: same as input)")
             print("\nModes:")
             print("  python socwatch_pp.py                    # GUI mode - select folder with dialog")
             print("  python socwatch_pp.py <input_folder>     # CLI mode - use specified folder")
@@ -734,9 +756,9 @@ def main():
             socwatch_dir = args[i + 1]
             i += 1  # Skip next argument as it's the directory path
             
-        elif arg == '--output-dir':
+        elif arg in ['-o', '--output-dir']:
             if i + 1 >= len(args):
-                print("❌ --output-dir requires a directory path")
+                print("❌ -o/--output-dir requires a directory path")
                 sys.exit(1)
             output_dir = Path(args[i + 1])
             i += 1  # Skip next argument as it's the directory path

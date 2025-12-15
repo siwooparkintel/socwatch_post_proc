@@ -69,8 +69,12 @@ python socwatch_pp.py --cli C:\data\socwatch_traces
 # Use custom SocWatch installation directory
 python socwatch_pp.py --socwatch-dir D:\MySocWatch C:\data\traces
 
-# Combine options (CLI mode with custom SocWatch directory)
-python socwatch_pp.py --cli --socwatch-dir C:\Intel\SocWatch C:\data\traces
+# Use custom output directory (saves results to different location)
+python socwatch_pp.py -o D:\results C:\data\traces
+python socwatch_pp.py --output-dir D:\results C:\data\traces
+
+# Combine options (CLI mode with custom SocWatch directory and output)
+python socwatch_pp.py --cli --socwatch-dir C:\Intel\SocWatch -o D:\results C:\data\traces
 
 # Show help
 python socwatch_pp.py --help
@@ -88,18 +92,41 @@ python socwatch_pp.py --help
 
 3. **File Discovery**: Recursively searches the input folder for all `.etl` files.
 
-4. **Batch Processing**: For each .etl file found:
+4. **Smart Skip Detection**: Before processing, checks if output already exists:
+   - Looks for `{workload_name}.csv` summary file
+   - Looks for `{workload_name}_WakeupAnalysis.csv` file
+   - Skips already-processed collections to save time
+
+5. **Batch Processing**: For each .etl file found:
    - Extracts the file prefix (filename without .etl extension)
-   - Runs: `socwatch.exe -i <prefix> -o <same_folder>`
+   - Skips if already processed (summary or wakeup analysis files exist)
+   - Runs: `socwatch.exe -i <prefix> -o <output_folder>`
    - Changes to the file's directory before processing
 
-5. **Reporting**: Provides a comprehensive report showing:
+6. **Reporting**: Provides a comprehensive report showing:
    - Total files processed
    - Success/failure counts
    - Processing time
    - Details of any failures
 
 ## Configuration
+
+### Output Directory
+
+By default, processed results are saved in the same directory as the input .etl files. You can specify a custom output directory:
+
+```bash
+# Using shorthand -o option
+python socwatch_pp.py -o D:\results C:\data\traces
+
+# Using full --output-dir option
+python socwatch_pp.py --output-dir D:\results C:\data\traces
+```
+
+When using a custom output directory:
+- Results are organized with unique collection identifiers
+- The tool creates subdirectories to prevent name conflicts
+- Already-processed collections are automatically skipped
 
 ### SocWatch Installation Path
 
