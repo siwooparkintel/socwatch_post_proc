@@ -482,12 +482,12 @@ class SocWatchProcessor:
             # Create a unique name using the parent directory name (e.g., CataV3_000, CataV3_004, etc.)
             collection_id = collection_dir.name  # e.g., "CataV3_000"
             parent_folder = collection_dir.parent.name  # e.g., "CataV3_OVEP_TME_000"
-            unique_name = f"{parent_folder}_{collection_id}"  # e.g., "CataV3_OVEP_TME_000_CataV3_000"
+            unique_name = base_name  # e.g., "CataV3_OVEP_TME_000_CataV3_000"
             
             # add timestamp after parent_folder here if needed to ensure uniqueness
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             
-            collection_output_dir = self.custom_output_dir / f"{parent_folder}_{timestamp}" / unique_name
+            collection_output_dir = self.custom_output_dir / f"{collection_dir.parent.parent.name}_{parent_folder}_{timestamp}" / unique_name
             print(f"   📁 Unique output: {unique_name}")
         else:
             # Use default: same location as input files (no subfolder)
@@ -529,14 +529,15 @@ class SocWatchProcessor:
         full_input_path = str(collection_dir / base_name)
         
         # Create output directory
-        output_dir = str(collection_output_dir)
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        output_dir = str(collection_output_dir)  # Use absolute path
+        # output_dir2 = str(collection_output_dir)  # Use absolute path
+        #Path(output_dir).mkdir(parents=True, exist_ok=True)
         
         # Build socwatch command
         cmd = [
             str(self.selected_version),
             "-i", full_input_path,
-            "-o", output_dir
+            "-o", output_dir  # Already absolute
         ]
         
         if collection['is_collection']:
