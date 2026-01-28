@@ -9,7 +9,9 @@ A simple Python tool for batch processing SocWatch .etl files using socwatch.exe
 - 🔍 **Auto-discovery** of SocWatch installations with flexible directory support
 - 📁 **Recursive scanning** for .etl files in input folders
 - 🎯 **Automated processing** using file prefixes as input parameters
-- 📊 **Comprehensive reporting** of processing results
+- ⏱️ **Time slicing** - Process specific time ranges from traces (supports multiple slices per file)
+- 📊 **JSON Export** - Generate .swjson files with detailed trace data for advanced analysis
+- 📈 **Comprehensive reporting** of processing results
 - ✅ **Simple single-file solution** - no external dependencies
 - 🛠️ **Flexible SocWatch location** - supports custom installation paths
 
@@ -73,12 +75,78 @@ python socwatch_pp.py --socwatch-dir D:\MySocWatch C:\data\traces
 python socwatch_pp.py -o D:\results C:\data\traces
 python socwatch_pp.py --output-dir D:\results C:\data\traces
 
-# Combine options (CLI mode with custom SocWatch directory and output)
-python socwatch_pp.py --cli --socwatch-dir C:\Intel\SocWatch -o D:\results C:\data\traces
+# Export .swjson format with extra details
+python socwatch_pp.py -r C:\data\traces
+
+# Process with time slice (1000ms to 15000ms)
+python socwatch_pp.py --slice-range 1000,15000 C:\data\traces
+
+# Process multiple time slices from the same .etl file
+python socwatch_pp.py --slice-range 1000,5000 --slice-range 10000,15000 C:\data\traces
+python socwatch_pp.py --slice-range 0,10000 --slice-range 20000,30000 --slice-range 40000,50000 C:\data\traces
+
+# Combine options (CLI mode with custom SocWatch directory, output, slicing, and JSON export)
+python socwatch_pp.py --cli --socwatch-dir C:\Intel\SocWatch -o D:\results -r --slice-range 1000,15000 C:\data\traces
 
 # Show help
 python socwatch_pp.py --help
 ```
+
+## Time Slicing Feature
+
+The `--slice-range` option allows you to process specific time ranges from SocWatch traces:
+
+- **Format**: `--slice-range <start_ms>,<end_ms>` where times are in milliseconds
+- **Multiple Slices**: You can specify `--slice-range` multiple times to process different time windows
+- **Output Naming**: Each slice generates files with `_slice_<start>-<end>ms` suffix (e.g., `workload_slice_1000-15000ms.csv`)
+- **Use Cases**:
+  - Extract specific test phases from long traces
+  - Compare different time periods of the same workload
+  - Focus analysis on regions of interest
+  - Generate multiple reports from a single collection
+
+**Example Workflow:**
+```bash
+# Process entire trace normally
+python socwatch_pp.py C:\data\long_test
+
+# Then extract specific phases with slicing
+python socwatch_pp.py --slice-range 5000,15000 --slice-range 30000,40000 C:\data\long_test
+# This generates: workload_slice_5000-15000ms.csv and workload_slice_30000-40000ms.csv
+```
+
+## JSON Export Feature
+
+The `-r` option enables export of trace data in `.swjson` format with enhanced details:
+
+- **Format**: `-r` (no additional arguments needed)
+- **SocWatch Flags**: Automatically passes `-m` (detailed metrics) and `-r` (JSON report) to socwatch.exe
+- **Output**: Generates `.swjson` files alongside standard CSV reports
+- **Use Cases**:
+  - Advanced data analysis with custom tools
+  - Integration with automated pipelines
+  - Parsing with swjson_parser.py for event visualization
+  - Detailed event timeline analysis (NPU, GPU, CPU metrics)
+
+**Example Usage:**
+```bash
+# Export trace data in .swjson format
+python socwatch_pp.py -r C:\data\traces
+
+# Combine with time slicing
+python socwatch_pp.py -r --slice-range 1000,15000 C:\data\traces
+
+# Full workflow: export JSON, slice time range, and save to custom location
+python socwatch_pp.py -r --slice-range 5000,15000 -o D:\results C:\data\traces
+```
+
+**What gets generated:**
+- Standard CSV reports (as usual)
+- `.swjson` files with detailed event data
+- Event timeline data for visualization
+- Enhanced metrics enabled by the `-m` flag
+
+**Note:** The `.swjson` files can be analyzed using the `swjson_parser.py` tool in the `parsing-suite` folder for event visualization and metrics extraction.
 
 ## How It Works
 
@@ -101,6 +169,7 @@ python socwatch_pp.py --help
    - Extracts the file prefix (filename without .etl extension)
    - Skips if already processed (summary or wakeup analysis files exist)
    - Runs: `socwatch.exe -i <prefix> -o <output_folder>`
+   - With `-r` flag: `socwatch.exe -i <prefix> -o <output_folder> -m -r` (exports .swjson)
    - Changes to the file's directory before processing
 
 6. **Reporting**: Provides a comprehensive report showing:

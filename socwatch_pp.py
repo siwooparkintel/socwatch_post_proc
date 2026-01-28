@@ -52,7 +52,36 @@ class SocWatchProcessor:
         self.use_gui = use_gui
         self.root = None
         self.custom_output_dir = None
+        self.slice_ranges = []  # List of slice ranges in format [(start, end), ...]
+        self.export_swjson = False  # Flag to export .swjson format
         
+    def _validate_slice_range(self, slice_range: str) -> Optional[Tuple[int, int]]:
+        """
+        Validate and parse slice range format (e.g., "1000,15000").
+        
+        Args:
+            slice_range: String in format "start,end" (milliseconds)
+            
+        Returns:
+            Tuple of (start, end) if valid, None otherwise
+        """
+        try:
+            parts = slice_range.strip().split(',')
+            if len(parts) != 2:
+                print(f"❌ Invalid slice range format: {slice_range} (expected 'start,end')")
+                return None
+            start, end = int(parts[0].strip()), int(parts[1].strip())
+            if start < 0:
+                print(f"❌ Invalid slice range: start time cannot be negative ({start})")
+                return None
+            if end <= start:
+                print(f"❌ Invalid slice range: end time ({end}) must be greater than start time ({start})")
+                return None
+            return (start, end)
+        except (ValueError, AttributeError) as e:
+            print(f"❌ Invalid slice range format: {slice_range} (error: {e})")
+            return None
+    
     def _resolve_socwatch_dir(self, socwatch_base_dir: Optional[str]) -> Path:
         """
         Resolve SocWatch base directory from various sources.
@@ -461,6 +490,7 @@ class SocWatchProcessor:
     def process_collection(self, collection: Dict) -> bool:
         """
         Process a SocWatch collection using socwatch.exe.
+        If multiple slice ranges are specified, processes each slice separately.
         
         Args:
             collection: Dictionary containing collection info
@@ -471,10 +501,43 @@ class SocWatchProcessor:
         if not self.selected_version:
             print("❌ No SocWatch version selected")
             return False
+        
+        # Determine if we need to process multiple slices
+        slices_to_process = self.slice_ranges if self.slice_ranges else [None]
+        
+        overall_success = True
+        for slice_idx, slice_range in enumerate(slices_to_process):
+            if not self._process_collection_with_slice(collection, slice_range, slice_idx):
+                overall_success = False
+        
+        return overall_success
+    
+    def _process_collection_with_slice(self, collection: Dict, slice_range: Optional[Tuple[int, int]], slice_idx: int) -> bool:
+        """
+        Process a single SocWatch collection or file with optional time slice.
+        
+        Args:
+            collection: Dictionary with collection info
+            slice_range: Optional tuple of (start_ms, end_ms) for time slicing
+            slice_idx: Index of the slice (for display purposes)
+            
+        Returns:
+            True if processing succeeded, False otherwise
+        """
             
         # Get collection info
         base_name = collection['base_name']
         collection_dir = collection['directory']
+        
+        # Add slice suffix to base name if processing with slice
+        if slice_range:
+            slice_suffix = f"_slice_{slice_range[0]}-{slice_range[1]}ms"
+            output_base_name = base_name + slice_suffix
+            print(f"\n{'='*60}")
+            print(f"📊 Processing slice {slice_idx + 1}/{len(self.slice_ranges)}: {slice_range[0]}ms - {slice_range[1]}ms")
+            print(f"{'='*60}")
+        else:
+            output_base_name = base_name
         
         # Determine output directory
         if self.custom_output_dir:
@@ -487,7 +550,7 @@ class SocWatchProcessor:
             # add timestamp after parent_folder here if needed to ensure uniqueness
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             
-            collection_output_dir = self.custom_output_dir / f"{collection_dir.parent.parent.name}_{parent_folder}_{timestamp}" / unique_name
+            collection_output_dir = self.custom_output_dir / f"{collection_dir.parent.parent.parent.name}_{collection_dir.parent.parent.name}_{parent_folder}_{timestamp}" / unique_name
             print(f"   📁 Unique output: {unique_name}")
         else:
             # Use default: same location as input files (no subfolder)
@@ -497,10 +560,10 @@ class SocWatchProcessor:
         skip_reasons = []
         
         # Check 1: Source directory for existing summary files
-        # Check for both naming patterns: {base_name}.csv and {base_name}_summary.csv
-        source_summary_csv = collection_dir / f"{base_name}.csv"
-        source_summary_csv_alt = collection_dir / f"{base_name}_summary.csv"
-        source_wakeup_csv = collection_dir / f"{base_name}_WakeupAnalysis.csv"
+        # Check for both naming patterns: {output_base_name}.csv and {output_base_name}_summary.csv
+        source_summary_csv = collection_dir / f"{output_base_name}.csv"
+        source_summary_csv_alt = collection_dir / f"{output_base_name}_summary.csv"
+        source_wakeup_csv = collection_dir / f"{output_base_name}_WakeupAnalysis.csv"
         
         if source_summary_csv.exists():
             skip_reasons.append(f"source summary file: {source_summary_csv.name}")
@@ -511,8 +574,8 @@ class SocWatchProcessor:
         
         # Check 2: Output directory (if using custom output)
         if self.custom_output_dir:
-            output_summary_csv = collection_output_dir / f"{base_name}.csv"
-            output_wakeup_csv = collection_output_dir / f"{base_name}_WakeupAnalysis.csv"
+            output_summary_csv = collection_output_dir / f"{output_base_name}.csv"
+            output_wakeup_csv = collection_output_dir / f"{output_base_name}_WakeupAnalysis.csv"
             if output_summary_csv.exists():
                 skip_reasons.append(f"output summary file: {output_summary_csv.name}")
             elif output_wakeup_csv.exists():
@@ -540,6 +603,15 @@ class SocWatchProcessor:
             "-o", output_dir  # Already absolute
         ]
         
+        # Add -m and -r flags if .swjson export is requested
+        if self.export_swjson:
+            cmd.extend(["-m", "-r"])
+        
+        # Add slice range parameter if specified
+        if slice_range:
+            slice_param = f"{slice_range[0]},{slice_range[1]}"
+            cmd.extend(["--result-slice-range", slice_param])
+        
         if collection['is_collection']:
             print(f"📊 Processing collection: {base_name}")
             print(f"   📚 Session files: {', '.join([f['filename'] + '.etl' for f in collection['files']])}")
@@ -550,10 +622,16 @@ class SocWatchProcessor:
         print(f"   🔧 SocWatch executable: {self.selected_version}")
         print(f"   📝 Input full path: {full_input_path}")
         print(f"   📤 Output directory: {output_dir}")
+        if slice_range:
+            print(f"   ⏱️  Time slice: {slice_range[0]}ms - {slice_range[1]}ms")
         print(f"   ⚡ Full command:")
         print(f"      {self.selected_version}")
         print(f"      -i {full_input_path}")
         print(f"      -o {output_dir}")
+        if self.export_swjson:
+            print(f"      -m -r (export .swjson with extra details)")
+        if slice_range:
+            print(f"      --result-slice-range {slice_range[0]},{slice_range[1]}")
         
         # Validate command before execution
         if not Path(self.selected_version).exists():
@@ -749,6 +827,8 @@ def main():
     input_folder = None
     socwatch_dir = None
     output_dir = None
+    export_swjson = False
+    slice_ranges_to_add = []  # Collect slice ranges to validate later
     
     args = sys.argv[1:]  # Remove script name
     i = 0
@@ -764,6 +844,8 @@ def main():
             print("  --cli                         Force CLI mode (no GUI dialogs)")
             print("  --socwatch-dir <path>         Specify SocWatch installation directory")
             print("  -o, --output-dir <path>       Specify output directory (default: same as input)")
+            print("  -r                            Export .swjson format with extra details (-m -r flags to socwatch.exe)")
+            print("  --slice-range <start,end>     Time slice range in milliseconds (can be specified multiple times)")
             print("\nModes:")
             print("  python socwatch_pp.py                    # GUI mode - select folder with dialog")
             print("  python socwatch_pp.py <input_folder>     # CLI mode - use specified folder")
@@ -774,6 +856,8 @@ def main():
             print("  python socwatch_pp.py --cli C:\\data\\traces         # Use CLI mode")
             print("  python socwatch_pp.py --output-dir D:\\results C:\\data  # Save results to local directory")
             print("  python socwatch_pp.py --socwatch-dir D:\\MySocWatch C:\\data  # Use custom SocWatch dir")
+            print("  python socwatch_pp.py --slice-range 1000,15000 C:\\data  # Process with time slice")
+            print("  python socwatch_pp.py --slice-range 1000,5000 --slice-range 10000,15000 C:\\data  # Multiple slices")
             print("\nEnvironment Variables:")
             print("  SOCWATCH_DIR                  SocWatch installation directory")
             return
@@ -795,6 +879,19 @@ def main():
                 sys.exit(1)
             output_dir = Path(args[i + 1])
             i += 1  # Skip next argument as it's the directory path
+        
+        elif arg == '-r':
+            export_swjson = True
+            print("📊 .swjson export enabled (will use -m -r flags)")
+            
+        elif arg == '--slice-range':
+            if i + 1 >= len(args):
+                print("❌ --slice-range requires a value in format 'start,end' (milliseconds)")
+                sys.exit(1)
+            slice_range_str = args[i + 1]
+            slice_ranges_to_add.append(slice_range_str)
+            print(f"📊 Slice range specified: {slice_range_str}")
+            i += 1  # Skip next argument as it's the slice range value
             
         elif arg.startswith('--'):
             print(f"❌ Unknown option: {arg}")
@@ -822,6 +919,9 @@ def main():
     # Initialize processor
     processor = SocWatchProcessor(socwatch_base_dir=socwatch_dir, use_gui=use_gui)
     
+    # Set export_swjson flag if requested
+    processor.export_swjson = export_swjson
+    
     # Set custom output directory if provided
     if output_dir:
         processor.custom_output_dir = output_dir
@@ -830,6 +930,21 @@ def main():
         output_dir.mkdir(parents=True, exist_ok=True)
     else:
         processor.custom_output_dir = None
+    
+    # Validate and add slice ranges if provided
+    if 'slice_ranges_to_add' in locals() and slice_ranges_to_add:
+        print(f"\n📏 Validating {len(slice_ranges_to_add)} slice range(s)...")
+        for slice_range_str in slice_ranges_to_add:
+            validated = processor._validate_slice_range(slice_range_str)
+            if validated:
+                processor.slice_ranges.append(validated)
+                print(f"   ✅ Valid slice range: {validated[0]}ms - {validated[1]}ms")
+            else:
+                print(f"   ❌ Skipping invalid slice range: {slice_range_str}")
+                sys.exit(1)
+        
+        if processor.slice_ranges:
+            print(f"\n🎯 Will process {len(processor.slice_ranges)} time slice(s) for each .etl file")
     
     # Get input folder
     if use_gui and input_folder is None:
