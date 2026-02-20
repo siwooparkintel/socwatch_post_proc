@@ -53,7 +53,7 @@ class SocWatchProcessor:
         self.root = None
         self.custom_output_dir = None
         self.slice_ranges = []  # List of slice ranges in format [(start, end), ...]
-        self.export_swjson = False  # Flag to export .swjson format
+        self.export_format = None  # Format to export (e.g., 'json' for .swjson)
         
     def _validate_slice_range(self, slice_range: str) -> Optional[Tuple[int, int]]:
         """
@@ -603,9 +603,9 @@ class SocWatchProcessor:
             "-o", output_dir  # Already absolute
         ]
         
-        # Add -m and -r flags if .swjson export is requested
-        if self.export_swjson:
-            cmd.extend(["-m", "-r"])
+        # Add -m and -r flags if export format is specified
+        if self.export_format:
+            cmd.extend(["-m", "-r", self.export_format])
         
         # Add slice range parameter if specified
         if slice_range:
@@ -628,8 +628,8 @@ class SocWatchProcessor:
         print(f"      {self.selected_version}")
         print(f"      -i {full_input_path}")
         print(f"      -o {output_dir}")
-        if self.export_swjson:
-            print(f"      -m -r (export .swjson with extra details)")
+        if self.export_format:
+            print(f"      -m -r {self.export_format} (export .swjson with extra details)")
         if slice_range:
             print(f"      --result-slice-range {slice_range[0]},{slice_range[1]}")
         
@@ -827,7 +827,7 @@ def main():
     input_folder = None
     socwatch_dir = None
     output_dir = None
-    export_swjson = False
+    export_format = None
     slice_ranges_to_add = []  # Collect slice ranges to validate later
     
     args = sys.argv[1:]  # Remove script name
@@ -844,7 +844,7 @@ def main():
             print("  --cli                         Force CLI mode (no GUI dialogs)")
             print("  --socwatch-dir <path>         Specify SocWatch installation directory")
             print("  -o, --output-dir <path>       Specify output directory (default: same as input)")
-            print("  -r                            Export .swjson format with extra details (-m -r flags to socwatch.exe)")
+            print("  -r <format>                   Export in specified format: 'json' for .swjson with extra details")
             print("  --slice-range <start,end>     Time slice range in milliseconds (can be specified multiple times)")
             print("\nModes:")
             print("  python socwatch_pp.py                    # GUI mode - select folder with dialog")
@@ -856,6 +856,7 @@ def main():
             print("  python socwatch_pp.py --cli C:\\data\\traces         # Use CLI mode")
             print("  python socwatch_pp.py --output-dir D:\\results C:\\data  # Save results to local directory")
             print("  python socwatch_pp.py --socwatch-dir D:\\MySocWatch C:\\data  # Use custom SocWatch dir")
+            print("  python socwatch_pp.py -r json C:\\data               # Export .swjson format")
             print("  python socwatch_pp.py --slice-range 1000,15000 C:\\data  # Process with time slice")
             print("  python socwatch_pp.py --slice-range 1000,5000 --slice-range 10000,15000 C:\\data  # Multiple slices")
             print("\nEnvironment Variables:")
@@ -881,8 +882,17 @@ def main():
             i += 1  # Skip next argument as it's the directory path
         
         elif arg == '-r':
-            export_swjson = True
-            print("📊 .swjson export enabled (will use -m -r flags)")
+            if i + 1 >= len(args):
+                print("❌ -r requires a value (e.g., 'json')")
+                sys.exit(1)
+            r_value = args[i + 1].lower()
+            if r_value == 'json':
+                export_format = r_value
+                print(f"📊 .swjson export enabled (will use -m -r {r_value} flags)")
+            else:
+                print(f"❌ Invalid value for -r: '{args[i + 1]}'. Expected 'json'")
+                sys.exit(1)
+            i += 1  # Skip next argument as it's the -r value
             
         elif arg == '--slice-range':
             if i + 1 >= len(args):
@@ -919,8 +929,8 @@ def main():
     # Initialize processor
     processor = SocWatchProcessor(socwatch_base_dir=socwatch_dir, use_gui=use_gui)
     
-    # Set export_swjson flag if requested
-    processor.export_swjson = export_swjson
+    # Set export_format if requested
+    processor.export_format = export_format
     
     # Set custom output directory if provided
     if output_dir:
