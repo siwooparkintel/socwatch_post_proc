@@ -22,6 +22,7 @@ import os
 import sys
 import subprocess
 import glob
+import shutil
 from pathlib import Path
 from typing import List, Tuple, Dict, Optional
 import time
@@ -555,6 +556,24 @@ class SocWatchProcessor:
         else:
             # Use default: same location as input files (no subfolder)
             collection_output_dir = collection_dir
+            
+        # Check if output path is a network path (UNC path) - SocWatch.exe cannot write to network paths
+        is_network_path = str(collection_output_dir).startswith('\\\\')
+        original_network_path = None  # Track original path for copying back later
+        if is_network_path and not self.custom_output_dir:
+            # SocWatch cannot write to network paths directly, use local temp directory
+            print(f"   ⚠️  Network path detected: SocWatch.exe cannot write to network locations")
+            print(f"   💡 Using local output directory instead")
+            # Save the original network path for copying back later
+            original_network_path = collection_output_dir
+            # Create a local output directory named after the ETL base name
+            # This ensures SocWatch creates files with the correct name from the start
+            local_output_base = Path.home() / "socwatch_output"
+            # Use parent path + ETL base name (not folder name)
+            path_suffix = Path(*collection_dir.parts[-3:-1]) / output_base_name if len(collection_dir.parts) >= 3 else Path(output_base_name)
+            collection_output_dir = local_output_base / path_suffix
+            print(f"   📁 Local output directory: {collection_output_dir}")
+            print(f"   📤 Will copy results back to: {original_network_path}")
         
         # Check if already processed in multiple locations
         skip_reasons = []
@@ -588,19 +607,20 @@ class SocWatchProcessor:
             self.processed_files.append(collection)
             return True
         
-        # Use full path to base name for input (directory + base_name)
-        full_input_path = str(collection_dir / base_name)
+        # Use output_base_name (ETL file base name) instead of folder name
+        # This ensures SocWatch creates files with the correct name from the start
+        # SocWatch expects the base name without path when running from the file directory
+        input_name = output_base_name
         
-        # Create output directory
+        # Create output directory (SocWatch.exe requires the directory to exist)
         output_dir = str(collection_output_dir)  # Use absolute path
-        # output_dir2 = str(collection_output_dir)  # Use absolute path
-        #Path(output_dir).mkdir(parents=True, exist_ok=True)
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
         
         # Build socwatch command
         cmd = [
             str(self.selected_version),
-            "-i", full_input_path,
-            "-o", output_dir  # Already absolute
+            "-i", input_name,
+            "-o", output_dir
         ]
         
         # Add -m and -r flags if export format is specified
@@ -620,13 +640,13 @@ class SocWatchProcessor:
         
         print(f"   📁 Working directory: {collection_dir}")
         print(f"   🔧 SocWatch executable: {self.selected_version}")
-        print(f"   📝 Input full path: {full_input_path}")
+        print(f"   📝 Input base name: {input_name}")
         print(f"   📤 Output directory: {output_dir}")
         if slice_range:
             print(f"   ⏱️  Time slice: {slice_range[0]}ms - {slice_range[1]}ms")
         print(f"   ⚡ Full command:")
         print(f"      {self.selected_version}")
-        print(f"      -i {full_input_path}")
+        print(f"      -i {input_name}")
         print(f"      -o {output_dir}")
         if self.export_format:
             print(f"      -m -r {self.export_format} (export .swjson with extra details)")
@@ -690,6 +710,73 @@ class SocWatchProcessor:
             
             if return_code == 0:
                 print(f"   ✅ Success")
+                
+                # If we used a local directory due to network path, rename and copy files back
+                if original_network_path:
+                    print(f"   � Renaming local files to match base name...")
+                    try:
+                        # Find all generated files - SocWatch may write to parent directory or output directory
+                        output_path = Path(output_dir)
+                        generated_files = []
+                        
+                        # Look for common SocWatch output file patterns in both output_dir and parent
+                        patterns = ['*.csv', '*.html', '*.json', '*.swjson', '*.txt', '*.xml']
+                        search_dirs = [output_path, output_path.parent]
+                        
+                        # SocWatch may name files after: base_name, output_base_name, or folder name
+                        possible_prefixes = [base_name, output_base_name, collection_dir.name, output_path.name]
+                        possible_prefixes = list(set(possible_prefixes))  # Remove duplicates
+                        
+                        for search_dir in search_dirs:
+                            if search_dir.exists():
+                                for pattern in patterns:
+                                    for file in search_dir.glob(pattern):
+                                        # Check if filename starts with any of our possible prefixes
+                                        if any(file.name.startswith(prefix) for prefix in possible_prefixes):
+                                            if file not in generated_files and file.is_file():
+                                                generated_files.append(file)
+                        
+                        # Rename local files first to match output_base_name
+                        renamed_files = []
+                        for file_path in generated_files:
+                            # Determine new name
+                            new_name = file_path.name
+                            for prefix in possible_prefixes:
+                                if file_path.name.startswith(prefix) and prefix != output_base_name:
+                                    # Replace the prefix with output_base_name
+                                    new_name = output_base_name + file_path.name[len(prefix):]
+                                    break
+                            
+                            # Rename the local file if needed
+                            if new_name != file_path.name:
+                                new_path = file_path.parent / new_name
+                                file_path.rename(new_path)
+                                print(f"      ✓ Renamed: {file_path.name} → {new_name}")
+                                renamed_files.append(new_path)
+                            else:
+                                renamed_files.append(file_path)
+                        
+                        # Now copy the renamed files to network location
+                        if renamed_files:
+                            print(f"   📤 Copying results back to network location...")
+                            # Ensure the network destination exists
+                            original_network_path.mkdir(parents=True, exist_ok=True)
+                            
+                            copied_count = 0
+                            for file_path in renamed_files:
+                                dest_path = original_network_path / file_path.name
+                                shutil.copy2(file_path, dest_path)
+                                copied_count += 1
+                                print(f"      ✓ Copied: {file_path.name}")
+                            
+                            print(f"   ✅ Successfully copied {copied_count} file(s) to {original_network_path}")
+                        else:
+                            print(f"   ⚠️  No output files found matching any prefix: {possible_prefixes}")
+                            print(f"   💡 Searched in: {output_path} and {output_path.parent}")
+                    except Exception as copy_error:
+                        print(f"   ⚠️  Warning: Failed to copy files back to network location: {copy_error}")
+                        print(f"   💡 Files may still be available at: {output_dir}")
+                
                 self.processed_files.append(collection)
                 return True
             else:
@@ -842,7 +929,7 @@ def main():
             print("Options:")
             print("  -h, --help                    Show this help message")
             print("  --cli                         Force CLI mode (no GUI dialogs)")
-            print("  --socwatch-dir <path>         Specify SocWatch installation directory")
+            print("  --socwatch-dir <path>         Specify SocWatch directory or exe (skips version selection)")
             print("  -o, --output-dir <path>       Specify output directory (default: same as input)")
             print("  -r <format>                   Export in specified format: 'json' for .swjson with extra details")
             print("  --slice-range <start,end>     Time slice range in milliseconds (can be specified multiple times)")
@@ -855,10 +942,14 @@ def main():
             print("  python socwatch_pp.py C:\\data\\socwatch_traces      # Use specified folder")
             print("  python socwatch_pp.py --cli C:\\data\\traces         # Use CLI mode")
             print("  python socwatch_pp.py --output-dir D:\\results C:\\data  # Save results to local directory")
-            print("  python socwatch_pp.py --socwatch-dir D:\\MySocWatch C:\\data  # Use custom SocWatch dir")
+            print("  python socwatch_pp.py --socwatch-dir C:\\socwatch\\2025.5.0 C:\\data  # Skip version selection")
             print("  python socwatch_pp.py -r json C:\\data               # Export .swjson format")
             print("  python socwatch_pp.py --slice-range 1000,15000 C:\\data  # Process with time slice")
             print("  python socwatch_pp.py --slice-range 1000,5000 --slice-range 10000,15000 C:\\data  # Multiple slices")
+            print("\nNetwork Paths:")
+            print("  When source files are on network paths (\\\\server\\share\\...), output is saved")
+            print("  to a local directory first, then copied back to the network location after")
+            print("  successful processing (SocWatch.exe cannot write directly to network paths).")
             print("\nEnvironment Variables:")
             print("  SOCWATCH_DIR                  SocWatch installation directory")
             return
@@ -929,6 +1020,18 @@ def main():
     # Initialize processor
     processor = SocWatchProcessor(socwatch_base_dir=socwatch_dir, use_gui=use_gui)
     
+    # Check if socwatch_dir is a direct path to socwatch.exe
+    if socwatch_dir:
+        socwatch_path = Path(socwatch_dir)
+        if socwatch_path.is_file() and socwatch_path.name.lower() == 'socwatch.exe':
+            # Direct path to socwatch.exe provided, skip version selection
+            processor.selected_version = socwatch_path
+            print(f"✅ Using specified SocWatch executable: {processor.selected_version}")
+        elif socwatch_path.is_dir() and (socwatch_path / "socwatch.exe").exists():
+            # Directory containing socwatch.exe provided, use it directly
+            processor.selected_version = socwatch_path / "socwatch.exe"
+            print(f"✅ Using SocWatch executable from specified directory: {processor.selected_version}")
+    
     # Set export_format if requested
     processor.export_format = export_format
     
@@ -989,12 +1092,12 @@ def main():
         
     print(f"📁 Input folder: {input_folder}")
     
-    # Select SocWatch version
-    if not processor.select_socwatch_version():
-        print("❌ No SocWatch version selected. Exiting.")
-        sys.exit(1)
-        
-    # Process all files
+    # Select SocWatch version (skip if already selected via --socwatch-dir)
+    if not processor.selected_version:
+        if not processor.select_socwatch_version():
+            print("❌ No SocWatch version selected. Exiting.")
+            sys.exit(1)
+        # Process all files
     try:
         print("🔍 Starting file detection and processing...")
         
