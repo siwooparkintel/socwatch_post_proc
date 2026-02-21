@@ -86,8 +86,12 @@ class PathManager:
         if self._is_network_path(final_dir):
             # Network path (input or custom output): use local temp
             # Mirror the network path structure under local temp
-            if len(actual_input_dir.parts) >= 3:
-                # Keep last 2 parent folders + etl_base_name
+            if len(actual_input_dir.parts) >= 4:
+                # Keep last 3 parent folders + etl_base_name for uniqueness
+                # Example: Base\gameSOTR_004\socwatch or XeSS\gameSOTR_004\socwatch
+                path_suffix = Path(*actual_input_dir.parts[-3:]) / etl_base_name
+            elif len(actual_input_dir.parts) >= 2:
+                # Keep what we have if less than 4 parts
                 path_suffix = Path(*actual_input_dir.parts[-2:]) / etl_base_name
             else:
                 path_suffix = Path(etl_base_name)
