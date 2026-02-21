@@ -6,6 +6,7 @@ A simple Python tool for batch processing SocWatch .etl files using socwatch.exe
 
 - 🖥️ **GUI Mode** - Easy folder selection with graphical interface
 - 💻 **CLI Mode** - Command-line interface for automation/scripting
+- 🌐 **Network Path Support** - Seamlessly process files from network shares (UNC paths)
 - 🔍 **Auto-discovery** of SocWatch installations with flexible directory support
 - 📁 **Recursive scanning** for .etl files in input folders
 - 🎯 **Automated processing** using file prefixes as input parameters
@@ -14,6 +15,7 @@ A simple Python tool for batch processing SocWatch .etl files using socwatch.exe
 - 📈 **Comprehensive reporting** of processing results
 - ✅ **Simple single-file solution** - no external dependencies
 - 🛠️ **Flexible SocWatch location** - supports custom installation paths
+- 🧹 **Clean output** - No unnecessary subdirectories, automatic temp cleanup
 
 ## Requirements
 
@@ -61,6 +63,9 @@ python socwatch_pp.py
 
 # CLI mode - use specified folder
 python socwatch_pp.py C:\data\socwatch_traces
+
+# Process files from network share
+python socwatch_pp.py \\server\share\data\socwatch_traces
 
 # CLI mode - process current directory
 python socwatch_pp.py .
@@ -158,21 +163,34 @@ python socwatch_pp.py -r --slice-range 5000,15000 -o D:\results C:\data\traces
 
 2. **Version Selection**: Scans the SocWatch directory for available socwatch.exe versions and lets you choose which one to use.
 
-3. **File Discovery**: Recursively searches the input folder for all `.etl` files.
+3. **Network Path Handling**: When processing files from network shares (UNC paths like `\\server\share\...`):
+   - Automatically detects network paths
+   - Creates a local temporary directory for processing (SocWatch cannot write directly to network locations)
+   - Processes files using the local temp directory
+   - Copies results back to the network location
+   - Cleans up temporary files automatically
 
-4. **Smart Skip Detection**: Before processing, checks if output already exists:
+4. **File Discovery**: Recursively searches the input folder for all `.etl` files.
+
+5. **Smart Skip Detection**: Before processing, checks if output already exists:
    - Looks for `{workload_name}.csv` summary file
    - Looks for `{workload_name}_WakeupAnalysis.csv` file
    - Skips already-processed collections to save time
 
-5. **Batch Processing**: For each .etl file found:
+6. **Batch Processing**: For each .etl file found:
    - Extracts the file prefix (filename without .etl extension)
    - Skips if already processed (summary or wakeup analysis files exist)
    - Runs: `socwatch.exe -i <prefix> -o <output_folder>`
    - With `-r` flag: `socwatch.exe -i <prefix> -o <output_folder> -m -r` (exports .swjson)
    - Changes to the file's directory before processing
+   - For network paths: copies results from temp to final location
 
-6. **Reporting**: Provides a comprehensive report showing:
+7. **Clean Output**: 
+   - Results are saved directly alongside input files (no subdirectories created)
+   - Empty temporary directories are automatically removed
+   - Network copies include cleanup of local temp files
+
+8. **Reporting**: Provides a comprehensive report showing:
    - Total files processed
    - Success/failure counts
    - Processing time
@@ -190,12 +208,47 @@ python socwatch_pp.py -o D:\results C:\data\traces
 
 # Using full --output-dir option
 python socwatch_pp.py --output-dir D:\results C:\data\traces
+
+# Save results from network share to local directory
+python socwatch_pp.py -o D:\results \\server\share\traces
+
+# Save results back to network share
+python socwatch_pp.py -o \\server\share\results C:\data\traces
 ```
 
-When using a custom output directory:
-- Results are organized with unique collection identifiers
-- The tool creates subdirectories to prevent name conflicts
+**Important Notes:**
+- Results are saved **directly** in the specified output directory (no subdirectories created)
+- CSV files are placed alongside the input .etl files
+- For network paths: automatic local temp processing with copy-back
 - Already-processed collections are automatically skipped
+
+### Network Path Support
+
+The tool fully supports network shares (UNC paths):
+
+```bash
+# Process files from network share
+python socwatch_pp.py \\10.54.63.126\share\data\traces
+
+# Output to network location
+python socwatch_pp.py -o \\server\results \\server\input
+
+# Mixed: network input, local output
+python socwatch_pp.py -o D:\local_results \\server\traces
+```
+
+**How Network Processing Works:**
+1. ⚠️ **Detection**: Automatically detects UNC paths (`\\server\share\...`)
+2. 📁 **Local Temp**: Creates temporary directory under `%USERPROFILE%\socwatch_output`
+3. ⚡ **Processing**: SocWatch runs using local temp directory (it cannot write to network directly)
+4. 📤 **Copy-back**: Results automatically copied to network location
+5. 🧹 **Cleanup**: Temporary files and empty directories removed
+
+**Benefits:**
+- Transparent to the user - works just like local paths
+- Handles SocWatch's limitation with network writes
+- Automatic cleanup prevents disk waste
+- Smart path mirroring preserves structure
 
 ### SocWatch Installation Path
 
@@ -260,7 +313,7 @@ The GUI makes it easy for non-technical users to process SocWatch files without 
 🔧 SocWatch Post-Processor (socwatch_pp)
 ========================================
 💻 CLI Mode: Using specified folder
-📁 Input folder: C:\data\socwatch_traces
+📁 Input folder: \\server\share\data\socwatch_traces
 
 🔍 Available SocWatch versions:
   1. D:\socwatch\v2.1\socwatch.exe
@@ -269,29 +322,37 @@ The GUI makes it easy for non-technical users to process SocWatch files without 
 Select version (1-2): 2
 ✅ Selected: D:\socwatch\v2.2\socwatch.exe
 
-🔍 Found 5 .etl files
+🔍 Found 4 SocWatch session files in 1 collection(s)
 
-🚀 Starting batch processing of 5 files...
+🚀 Starting batch processing of 1 collection(s)...
 ============================================================
 
-[1/5] trace1.etl
-📊 Processing: trace1.etl
-   Command: D:\socwatch\v2.2\socwatch.exe -i trace1 -o C:\data\socwatch_traces
+[1/1] AI_GPU_model_stripped (Collection)
+   ⚠️  Network path detected: SocWatch.exe cannot write to network locations
+   � Using local temp directory for processing
+   📁 Work directory: C:\Users\username\socwatch_output\...\AI_GPU_model_stripped
+   📤 Will copy results to: \\server\share\data\socwatch_traces
+📊 Processing collection: AI_GPU_model_stripped
+   � Session files: AI_GPU_model_stripped_extraSession.etl, ...
+   🔧 SocWatch executable: D:\socwatch\v2.2\socwatch.exe
+   📝 Input base name: AI_GPU_model_stripped
+   📤 Output directory: C:\Users\username\socwatch_output\...\AI_GPU_model_stripped
+   🚀 Starting SocWatch processing (may take several minutes for large files)...
    ✅ Success
-
-[2/5] subfolder\trace2.etl
-📊 Processing: trace2.etl
-   Command: D:\socwatch\v2.2\socwatch.exe -i trace2 -o C:\data\socwatch_traces\subfolder
-   ✅ Success
+   📤 Copying results to: \\server\share\data\socwatch_traces
+      ✓ Copied: AI_GPU_model_stripped.csv
+      ✓ Copied: AI_GPU_model_stripped_WakeupAnalysis.csv
+   ✅ Successfully copied 2 file(s)
+   🧹 Cleaned up empty directory: AI_GPU_model_stripped
 
 ============================================================
 📋 FINAL PROCESSING REPORT
 ============================================================
-📊 Total files processed: 5
-✅ Successfully processed: 5
+📊 Total collections processed: 1
+✅ Successfully processed: 1
 ❌ Failed: 0
 📈 Success rate: 100.0%
-⏱️  Total time: 45.2 seconds
+⏱️  Total time: 18.6 seconds
 🔧 Used SocWatch: D:\socwatch\v2.2\socwatch.exe
 ✨ Processing complete!
 ```
@@ -322,6 +383,16 @@ The tool handles various error conditions:
    - Run the script with administrator privileges if needed
    - Check write permissions in output directories
 
+4. **Network Path Issues**
+   - Ensure network share is accessible and you have write permissions
+   - Local temp directory requires sufficient disk space
+   - Network copy-back may be slow for large result files
+
+5. **"No output files found" when copying**
+   - SocWatch may write files to parent directory instead of specified output
+   - Tool automatically searches both locations
+   - Check local temp directory: `%USERPROFILE%\socwatch_output`
+
 ### Debug Mode
 
 For more detailed output, you can modify the script to add verbose logging by uncommenting debug print statements.
@@ -333,6 +404,29 @@ The script can be easily customized:
 - **Change SocWatch base directory**: Use `--socwatch-dir` argument or set `SOCWATCH_DIR` environment variable
 - **Adjust timeout**: Change the `timeout=1800` parameter in `subprocess.run()` (default: 30 minutes)
 - **Add more SocWatch arguments**: Extend the `cmd` list in `process_collection()`
+
+## Architecture
+
+The tool uses a clean, modular architecture:
+
+### PathManager Class
+Centralized path management that handles:
+- Network path detection (UNC paths)
+- Local temporary directory creation
+- Work directory vs. final directory resolution
+- Copy-back requirements
+
+### ProcessingPaths NamedTuple
+Clear data structure containing:
+- `work_dir`: Where SocWatch writes files (always local)
+- `final_dir`: Where files should end up (may be network)
+- `needs_copy`: Flag indicating if copy-back is needed
+
+### Key Benefits
+- **Clean separation**: Path logic isolated from processing logic
+- **Easy debugging**: Clear variable names and structure
+- **Network transparency**: Handles local and network paths uniformly
+- **Automatic cleanup**: Empty directories removed after processing
 
 ## License
 

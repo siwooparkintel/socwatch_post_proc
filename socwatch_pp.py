@@ -24,12 +24,87 @@ import subprocess
 import glob
 import shutil
 from pathlib import Path
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, NamedTuple
 import time
 import datetime
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
+
+
+class ProcessingPaths(NamedTuple):
+    """Container for all path information needed during processing."""
+    work_dir: Path      # Where SocWatch writes files (always local)
+    final_dir: Path     # Where files should ultimately be (may be network)
+    needs_copy: bool    # Whether files need copying from work_dir to final_dir
+
+
+class PathManager:
+    """Centralized path management for input/output directories."""
+    
+    def __init__(self, input_dir: Path, custom_output_dir: Optional[Path] = None):
+        """
+        Initialize path manager.
+        
+        Args:
+            input_dir: Directory containing ETL files
+            custom_output_dir: Optional custom output directory (from -o/--output-dir)
+        """
+        self.input_dir = input_dir
+        self.custom_output_dir = custom_output_dir
+        self.is_network_input = self._is_network_path(input_dir)
+        self.local_temp_base = Path.home() / "socwatch_output"
+        
+    @staticmethod
+    def _is_network_path(path: Path) -> bool:
+        """Check if path is a UNC network path."""
+        return str(path).startswith('\\\\')
+    
+    def get_processing_paths(self, etl_base_name: str) -> ProcessingPaths:
+        """
+        Determine where SocWatch should write files and where they should end up.
+        
+        Args:
+            etl_base_name: Base name from ETL files (e.g., "AI_GPU_model_stripped")
+            
+        Returns:
+            ProcessingPaths with work_dir, final_dir, and needs_copy flag
+        """
+        # Determine final destination
+        if self.custom_output_dir:
+            # User specified custom output with -o/--output-dir
+            final_dir = self.custom_output_dir
+        else:
+            # Default: same location as input files
+            final_dir = self.input_dir
+        
+        # Determine work directory (where SocWatch actually writes)
+        if self._is_network_path(final_dir):
+            # Network path (input or custom output): use local temp
+            # Mirror the network path structure under local temp
+            if len(self.input_dir.parts) >= 3:
+                # Keep last 2 parent folders + etl_base_name
+                path_suffix = Path(*self.input_dir.parts[-2:]) / etl_base_name
+            else:
+                path_suffix = Path(etl_base_name)
+            work_dir = self.local_temp_base / path_suffix
+            needs_copy = True
+        else:
+            # Local path: write directly to final destination
+            work_dir = final_dir
+            needs_copy = False
+        
+        return ProcessingPaths(work_dir=work_dir, final_dir=final_dir, needs_copy=needs_copy)
+    
+    def log_paths(self, paths: ProcessingPaths):
+        """Log path information for debugging."""
+        if paths.needs_copy:
+            print(f"   ⚠️  Network path detected: SocWatch.exe cannot write to network locations")
+            print(f"   💡 Using local temp directory for processing")
+            print(f"   📁 Work directory: {paths.work_dir}")
+            print(f"   📤 Will copy results to: {paths.final_dir}")
+        else:
+            print(f"   📁 Output directory: {paths.work_dir}")
 
 
 class SocWatchProcessor:
@@ -53,6 +128,7 @@ class SocWatchProcessor:
         self.use_gui = use_gui
         self.root = None
         self.custom_output_dir = None
+        self.path_manager = None  # Will be initialized when input folder is known
         self.slice_ranges = []  # List of slice ranges in format [(start, end), ...]
         self.export_format = None  # Format to export (e.g., 'json' for .swjson)
         
@@ -82,6 +158,80 @@ class SocWatchProcessor:
         except (ValueError, AttributeError) as e:
             print(f"❌ Invalid slice range format: {slice_range} (error: {e})")
             return None
+    
+    def _is_already_processed(self, output_dir: Path, etl_base_name: str) -> bool:
+        """
+        Check if collection has already been processed.
+        
+        Args:
+            output_dir: Directory to check for existing files
+            etl_base_name: Base name of the ETL files
+            
+        Returns:
+            True if already processed, False otherwise
+        """
+        # Check for both naming patterns
+        summary_csv = output_dir / f"{etl_base_name}.csv"
+        summary_csv_alt = output_dir / f"{etl_base_name}_summary.csv"
+        wakeup_csv = output_dir / f"{etl_base_name}_WakeupAnalysis.csv"
+        
+        return summary_csv.exists() or summary_csv_alt.exists() or wakeup_csv.exists()
+    
+    def _copy_results_to_final(self, work_dir: Path, final_dir: Path, etl_base_name: str):
+        """
+        Copy generated files from work directory to final destination.
+        
+        Args:
+            work_dir: Where SocWatch wrote files (local temp)
+            final_dir: Where files should end up (network location)
+            etl_base_name: Base name of ETL files for filtering
+        """
+        print(f"   📤 Copying results to: {final_dir}")
+        try:
+            # Find generated files with the ETL base name
+            # SocWatch may write to work_dir or its parent
+            patterns = ['*.csv', '*.html', '*.json', '*.swjson', '*.txt', '*.xml']
+            generated_files = []
+            
+            search_dirs = [work_dir, work_dir.parent]
+            for search_dir in search_dirs:
+                if search_dir.exists():
+                    for pattern in patterns:
+                        for file in search_dir.glob(pattern):
+                            if file.name.startswith(etl_base_name) and file.is_file():
+                                if file not in generated_files:
+                                    generated_files.append(file)
+            
+            if generated_files:
+                # Ensure destination exists
+                final_dir.mkdir(parents=True, exist_ok=True)
+                
+                copied_count = 0
+                for file_path in generated_files:
+                    dest_path = final_dir / file_path.name
+                    shutil.copy2(file_path, dest_path)
+                    copied_count += 1
+                    print(f"      ✓ Copied: {file_path.name}")
+                
+                print(f"   ✅ Successfully copied {copied_count} file(s)")
+                
+                # Clean up: Remove empty work_dir if it exists and is empty
+                # (SocWatch creates it but writes to parent)
+                try:
+                    if work_dir.exists() and work_dir.is_dir():
+                        # Check if directory is empty
+                        if not any(work_dir.iterdir()):
+                            work_dir.rmdir()
+                            print(f"   🧹 Cleaned up empty directory: {work_dir.name}")
+                except Exception as cleanup_err:
+                    # Don't fail the whole operation if cleanup fails
+                    print(f"   💡 Note: Could not remove empty directory: {cleanup_err}")
+            else:
+                print(f"   ⚠️  No output files found starting with: {etl_base_name}")
+                print(f"   💡 Searched in: {work_dir} and {work_dir.parent}")
+        except Exception as e:
+            print(f"   ⚠️  Warning: Failed to copy files: {e}")
+            print(f"   💡 Files may still be available at: {work_dir}")
     
     def _resolve_socwatch_dir(self, socwatch_base_dir: Optional[str]) -> Path:
         """
@@ -525,102 +675,37 @@ class SocWatchProcessor:
         Returns:
             True if processing succeeded, False otherwise
         """
-            
         # Get collection info
-        base_name = collection['base_name']
+        etl_base_name = collection['base_name']
         collection_dir = collection['directory']
         
         # Add slice suffix to base name if processing with slice
         if slice_range:
             slice_suffix = f"_slice_{slice_range[0]}-{slice_range[1]}ms"
-            output_base_name = base_name + slice_suffix
+            etl_base_name = etl_base_name + slice_suffix
             print(f"\n{'='*60}")
             print(f"📊 Processing slice {slice_idx + 1}/{len(self.slice_ranges)}: {slice_range[0]}ms - {slice_range[1]}ms")
             print(f"{'='*60}")
-        else:
-            output_base_name = base_name
         
-        # Determine output directory
-        if self.custom_output_dir:
-            # Use custom output directory with unique collection identifier
-            # Create a unique name using the parent directory name (e.g., CataV3_000, CataV3_004, etc.)
-            collection_id = collection_dir.name  # e.g., "CataV3_000"
-            parent_folder = collection_dir.parent.name  # e.g., "CataV3_OVEP_TME_000"
-            unique_name = base_name  # e.g., "CataV3_OVEP_TME_000_CataV3_000"
-            
-            # add timestamp after parent_folder here if needed to ensure uniqueness
-            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            
-            collection_output_dir = self.custom_output_dir / f"{collection_dir.parent.parent.parent.name}_{collection_dir.parent.parent.name}_{parent_folder}_{timestamp}" / unique_name
-            print(f"   📁 Unique output: {unique_name}")
-        else:
-            # Use default: same location as input files (no subfolder)
-            collection_output_dir = collection_dir
-            
-        # Check if output path is a network path (UNC path) - SocWatch.exe cannot write to network paths
-        is_network_path = str(collection_output_dir).startswith('\\\\')
-        original_network_path = None  # Track original path for copying back later
-        if is_network_path and not self.custom_output_dir:
-            # SocWatch cannot write to network paths directly, use local temp directory
-            print(f"   ⚠️  Network path detected: SocWatch.exe cannot write to network locations")
-            print(f"   💡 Using local output directory instead")
-            # Save the original network path for copying back later
-            original_network_path = collection_output_dir
-            # Create a local output directory named after the ETL base name
-            # This ensures SocWatch creates files with the correct name from the start
-            local_output_base = Path.home() / "socwatch_output"
-            # Use parent path + ETL base name (not folder name)
-            path_suffix = Path(*collection_dir.parts[-3:-1]) / output_base_name if len(collection_dir.parts) >= 3 else Path(output_base_name)
-            collection_output_dir = local_output_base / path_suffix
-            print(f"   📁 Local output directory: {collection_output_dir}")
-            print(f"   📤 Will copy results back to: {original_network_path}")
+        # Get processing paths from PathManager
+        paths = self.path_manager.get_processing_paths(etl_base_name)
+        self.path_manager.log_paths(paths)
         
-        # Check if already processed in multiple locations
-        skip_reasons = []
-        
-        # Check 1: Source directory for existing summary files
-        # Check for both naming patterns: {output_base_name}.csv and {output_base_name}_summary.csv
-        source_summary_csv = collection_dir / f"{output_base_name}.csv"
-        source_summary_csv_alt = collection_dir / f"{output_base_name}_summary.csv"
-        source_wakeup_csv = collection_dir / f"{output_base_name}_WakeupAnalysis.csv"
-        
-        if source_summary_csv.exists():
-            skip_reasons.append(f"source summary file: {source_summary_csv.name}")
-        elif source_summary_csv_alt.exists():
-            skip_reasons.append(f"source summary file: {source_summary_csv_alt.name}")
-        elif source_wakeup_csv.exists():
-            skip_reasons.append(f"wakeup analysis file: {source_wakeup_csv.name}")
-        
-        # Check 2: Output directory (if using custom output)
-        if self.custom_output_dir:
-            output_summary_csv = collection_output_dir / f"{output_base_name}.csv"
-            output_wakeup_csv = collection_output_dir / f"{output_base_name}_WakeupAnalysis.csv"
-            if output_summary_csv.exists():
-                skip_reasons.append(f"output summary file: {output_summary_csv.name}")
-            elif output_wakeup_csv.exists():
-                skip_reasons.append(f"output wakeup analysis: {output_wakeup_csv.name}")
-        
-        # Skip if already processed anywhere
-        if skip_reasons:
-            reason_text = " and ".join(skip_reasons)
-            print(f"   ⏭️  Skipping - already processed (found {reason_text})")
+        # Check if already processed
+        if self._is_already_processed(paths.final_dir, etl_base_name):
+            print(f"   ⏭️  Skipping - already processed")
             self.processed_files.append(collection)
             return True
         
-        # Use output_base_name (ETL file base name) instead of folder name
-        # This ensures SocWatch creates files with the correct name from the start
-        # SocWatch expects the base name without path when running from the file directory
-        input_name = output_base_name
-        
-        # Create output directory (SocWatch.exe requires the directory to exist)
-        output_dir = str(collection_output_dir)  # Use absolute path
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        # Create work directory (SocWatch.exe requires it to exist)
+        paths.work_dir.mkdir(parents=True, exist_ok=True)
         
         # Build socwatch command
+        # Note: input_name is the ETL base name, ensuring correct output file naming
         cmd = [
             str(self.selected_version),
-            "-i", input_name,
-            "-o", output_dir
+            "-i", etl_base_name,
+            "-o", str(paths.work_dir)
         ]
         
         # Add -m and -r flags if export format is specified
@@ -632,22 +717,23 @@ class SocWatchProcessor:
             slice_param = f"{slice_range[0]},{slice_range[1]}"
             cmd.extend(["--result-slice-range", slice_param])
         
+        # Log processing info
         if collection['is_collection']:
-            print(f"📊 Processing collection: {base_name}")
+            print(f"📊 Processing collection: {collection['base_name']}")
             print(f"   📚 Session files: {', '.join([f['filename'] + '.etl' for f in collection['files']])}")
         else:
             print(f"📊 Processing: {collection['files'][0]['filename']}.etl")
         
         print(f"   📁 Working directory: {collection_dir}")
         print(f"   🔧 SocWatch executable: {self.selected_version}")
-        print(f"   📝 Input base name: {input_name}")
-        print(f"   📤 Output directory: {output_dir}")
+        print(f"   📝 Input base name: {etl_base_name}")
+        print(f"   📤 Output directory: {paths.work_dir}")
         if slice_range:
             print(f"   ⏱️  Time slice: {slice_range[0]}ms - {slice_range[1]}ms")
         print(f"   ⚡ Full command:")
         print(f"      {self.selected_version}")
-        print(f"      -i {input_name}")
-        print(f"      -o {output_dir}")
+        print(f"      -i {etl_base_name}")
+        print(f"      -o {paths.work_dir}")
         if self.export_format:
             print(f"      -m -r {self.export_format} (export .swjson with extra details)")
         if slice_range:
@@ -711,71 +797,9 @@ class SocWatchProcessor:
             if return_code == 0:
                 print(f"   ✅ Success")
                 
-                # If we used a local directory due to network path, rename and copy files back
-                if original_network_path:
-                    print(f"   � Renaming local files to match base name...")
-                    try:
-                        # Find all generated files - SocWatch may write to parent directory or output directory
-                        output_path = Path(output_dir)
-                        generated_files = []
-                        
-                        # Look for common SocWatch output file patterns in both output_dir and parent
-                        patterns = ['*.csv', '*.html', '*.json', '*.swjson', '*.txt', '*.xml']
-                        search_dirs = [output_path, output_path.parent]
-                        
-                        # SocWatch may name files after: base_name, output_base_name, or folder name
-                        possible_prefixes = [base_name, output_base_name, collection_dir.name, output_path.name]
-                        possible_prefixes = list(set(possible_prefixes))  # Remove duplicates
-                        
-                        for search_dir in search_dirs:
-                            if search_dir.exists():
-                                for pattern in patterns:
-                                    for file in search_dir.glob(pattern):
-                                        # Check if filename starts with any of our possible prefixes
-                                        if any(file.name.startswith(prefix) for prefix in possible_prefixes):
-                                            if file not in generated_files and file.is_file():
-                                                generated_files.append(file)
-                        
-                        # Rename local files first to match output_base_name
-                        renamed_files = []
-                        for file_path in generated_files:
-                            # Determine new name
-                            new_name = file_path.name
-                            for prefix in possible_prefixes:
-                                if file_path.name.startswith(prefix) and prefix != output_base_name:
-                                    # Replace the prefix with output_base_name
-                                    new_name = output_base_name + file_path.name[len(prefix):]
-                                    break
-                            
-                            # Rename the local file if needed
-                            if new_name != file_path.name:
-                                new_path = file_path.parent / new_name
-                                file_path.rename(new_path)
-                                print(f"      ✓ Renamed: {file_path.name} → {new_name}")
-                                renamed_files.append(new_path)
-                            else:
-                                renamed_files.append(file_path)
-                        
-                        # Now copy the renamed files to network location
-                        if renamed_files:
-                            print(f"   📤 Copying results back to network location...")
-                            # Ensure the network destination exists
-                            original_network_path.mkdir(parents=True, exist_ok=True)
-                            
-                            copied_count = 0
-                            for file_path in renamed_files:
-                                dest_path = original_network_path / file_path.name
-                                shutil.copy2(file_path, dest_path)
-                                copied_count += 1
-                                print(f"      ✓ Copied: {file_path.name}")
-                            
-                            print(f"   ✅ Successfully copied {copied_count} file(s) to {original_network_path}")
-                        else:
-                            print(f"   ⚠️  No output files found matching any prefix: {possible_prefixes}")
-                            print(f"   💡 Searched in: {output_path} and {output_path.parent}")
-                    except Exception as copy_error:
-                        print(f"   ⚠️  Warning: Failed to copy files back to network location: {copy_error}")
-                        print(f"   💡 Files may still be available at: {output_dir}")
+                # Copy files to final destination if needed
+                if paths.needs_copy:
+                    self._copy_results_to_final(paths.work_dir, paths.final_dir, etl_base_name)
                 
                 self.processed_files.append(collection)
                 return True
@@ -802,7 +826,7 @@ class SocWatchProcessor:
                     
                     # Check output directory write permission
                     try:
-                        test_file = Path(output_dir) / ".write_test"
+                        test_file = paths.work_dir / ".write_test"
                         test_file.touch()
                         test_file.unlink()
                         print(f"   ✓ Output directory write test: PASSED")
@@ -837,6 +861,9 @@ class SocWatchProcessor:
         Args:
             input_folder: Root folder to process
         """
+        # Initialize path manager with input folder
+        self.path_manager = PathManager(input_folder, self.custom_output_dir)
+        
         self.start_time = time.time()
         collections = self.find_etl_files(input_folder)
         
@@ -851,7 +878,7 @@ class SocWatchProcessor:
         print(f"📋 Command pattern: socwatch.exe -i <base_prefix> -o <output_folder>")
         print(f"📖 Options explanation:")
         print(f"   -i <prefix>  : Input base prefix (for collections, use base name)")
-        print(f"   -o <folder>  : Output directory (same as input file location)")
+        print(f"   -o <folder>  : Output directory (local temp if network source)")
         print(f"💡 Working directory: Changes to each collection's folder before processing")
         print(f"🔍 Collection detection: Groups session files by base name (e.g., CataV3)")
         print("=" * 60)
