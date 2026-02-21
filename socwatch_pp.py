@@ -60,31 +60,35 @@ class PathManager:
         """Check if path is a UNC network path."""
         return str(path).startswith('\\\\')
     
-    def get_processing_paths(self, etl_base_name: str) -> ProcessingPaths:
+    def get_processing_paths(self, etl_base_name: str, collection_dir: Optional[Path] = None) -> ProcessingPaths:
         """
         Determine where SocWatch should write files and where they should end up.
         
         Args:
             etl_base_name: Base name from ETL files (e.g., "AI_GPU_model_stripped")
+            collection_dir: Actual directory containing the collection files (overrides input_dir)
             
         Returns:
             ProcessingPaths with work_dir, final_dir, and needs_copy flag
         """
+        # Use collection_dir if provided, otherwise fall back to input_dir
+        actual_input_dir = collection_dir if collection_dir else self.input_dir
+        
         # Determine final destination
         if self.custom_output_dir:
             # User specified custom output with -o/--output-dir
             final_dir = self.custom_output_dir
         else:
-            # Default: same location as input files
-            final_dir = self.input_dir
+            # Default: same location as input files (collection's directory)
+            final_dir = actual_input_dir
         
         # Determine work directory (where SocWatch actually writes)
         if self._is_network_path(final_dir):
             # Network path (input or custom output): use local temp
             # Mirror the network path structure under local temp
-            if len(self.input_dir.parts) >= 3:
+            if len(actual_input_dir.parts) >= 3:
                 # Keep last 2 parent folders + etl_base_name
-                path_suffix = Path(*self.input_dir.parts[-2:]) / etl_base_name
+                path_suffix = Path(*actual_input_dir.parts[-2:]) / etl_base_name
             else:
                 path_suffix = Path(etl_base_name)
             work_dir = self.local_temp_base / path_suffix
@@ -687,8 +691,8 @@ class SocWatchProcessor:
             print(f"📊 Processing slice {slice_idx + 1}/{len(self.slice_ranges)}: {slice_range[0]}ms - {slice_range[1]}ms")
             print(f"{'='*60}")
         
-        # Get processing paths from PathManager
-        paths = self.path_manager.get_processing_paths(etl_base_name)
+        # Get processing paths from PathManager (pass collection_dir for accurate skip detection)
+        paths = self.path_manager.get_processing_paths(etl_base_name, collection_dir)
         self.path_manager.log_paths(paths)
         
         # Check if already processed
