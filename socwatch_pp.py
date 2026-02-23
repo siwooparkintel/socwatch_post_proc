@@ -118,7 +118,7 @@ class PathManager:
 class SocWatchProcessor:
     """Main class for SocWatch post-processing operations."""
     
-    def __init__(self, socwatch_base_dir: Optional[str] = None, use_gui: bool = True):
+    def __init__(self, socwatch_base_dir: Optional[str] = None, use_gui: bool = True, force: bool = False):
         """
         Initialize SocWatch processor.
         
@@ -126,6 +126,7 @@ class SocWatchProcessor:
             socwatch_base_dir: Base directory containing SocWatch versions. 
                               If None, will auto-detect or use environment variable.
             use_gui: Whether to use GUI for folder selection and dialogs
+            force: Whether to force reprocessing even if output already exists
         """
         self.socwatch_base_dir = self._resolve_socwatch_dir(socwatch_base_dir)
         self.available_versions = []
@@ -139,6 +140,7 @@ class SocWatchProcessor:
         self.path_manager = None  # Will be initialized when input folder is known
         self.slice_ranges = []  # List of slice ranges in format [(start, end), ...]
         self.export_format = None  # Format to export (e.g., 'json' for .swjson)
+        self.force = force  # Force reprocessing flag
         
     def _validate_slice_range(self, slice_range: str) -> Optional[Tuple[int, int]]:
         """
@@ -699,9 +701,9 @@ class SocWatchProcessor:
         paths = self.path_manager.get_processing_paths(etl_base_name, collection_dir)
         self.path_manager.log_paths(paths)
         
-        # Check if already processed
-        if self._is_already_processed(paths.final_dir, etl_base_name):
-            print(f"   ⏭️  Skipping - already processed")
+        # Check if already processed (unless force flag is set)
+        if not self.force and self._is_already_processed(paths.final_dir, etl_base_name):
+            print(f"   ⏭️  Skipping - already processed (use --force to reprocess)")
             self.processed_files.append(collection)
             return True
         
@@ -950,6 +952,7 @@ def main():
     socwatch_dir = None
     output_dir = None
     export_format = None
+    force = False
     slice_ranges_to_add = []  # Collect slice ranges to validate later
     
     args = sys.argv[1:]  # Remove script name
@@ -966,6 +969,7 @@ def main():
             print("  --cli                         Force CLI mode (no GUI dialogs)")
             print("  --socwatch-dir <path>         Specify SocWatch directory or exe (skips version selection)")
             print("  -o, --output-dir <path>       Specify output directory (default: same as input)")
+            print("  -f, --force                   Force reprocessing even if output already exists")
             print("  -r <format>                   Export in specified format: 'json' for .swjson with extra details")
             print("  --slice-range <start,end>     Time slice range in milliseconds (can be specified multiple times)")
             print("\nModes:")
@@ -976,6 +980,7 @@ def main():
             print("  python socwatch_pp.py                              # Open folder selection dialog")
             print("  python socwatch_pp.py C:\\data\\socwatch_traces      # Use specified folder")
             print("  python socwatch_pp.py --cli C:\\data\\traces         # Use CLI mode")
+            print("  python socwatch_pp.py --force C:\\data                # Reprocess even if already processed")
             print("  python socwatch_pp.py --output-dir D:\\results C:\\data  # Save results to local directory")
             print("  python socwatch_pp.py --socwatch-dir C:\\socwatch\\2025.5.0 C:\\data  # Skip version selection")
             print("  python socwatch_pp.py -r json C:\\data               # Export .swjson format")
@@ -1006,6 +1011,10 @@ def main():
                 sys.exit(1)
             output_dir = Path(args[i + 1])
             i += 1  # Skip next argument as it's the directory path
+        
+        elif arg in ['-f', '--force']:
+            force = True
+            print("🔄 Force mode enabled - will reprocess even if output exists")
         
         elif arg == '-r':
             if i + 1 >= len(args):
@@ -1052,8 +1061,8 @@ def main():
         print("🖥️  GUI Mode: Select folder using dialog")
         use_gui = True
     
-    # Initialize processor
-    processor = SocWatchProcessor(socwatch_base_dir=socwatch_dir, use_gui=use_gui)
+    # Initialize processor with force flag
+    processor = SocWatchProcessor(socwatch_base_dir=socwatch_dir, use_gui=use_gui, force=force)
     
     # Check if socwatch_dir is a direct path to socwatch.exe
     if socwatch_dir:
