@@ -187,7 +187,9 @@ class SocWatchProcessor:
         
         return summary_csv.exists() or summary_csv_alt.exists() or wakeup_csv.exists()
     
-    def _copy_results_to_final(self, work_dir: Path, final_dir: Path, etl_base_name: str):
+    def _copy_results_to_final(self, work_dir: Path, final_dir: Path, etl_base_name: str,
+                               export_format: Optional[str] = None,
+                               process_start_time: Optional[float] = None):
         """
         Copy generated files from work directory to final destination.
         
@@ -200,7 +202,7 @@ class SocWatchProcessor:
         try:
             # Find generated files with the ETL base name
             # SocWatch may write to work_dir or its parent
-            patterns = ['*.csv', '*.html', '*.json', '*.swjson', '*.txt', '*.xml']
+            patterns = ['*.csv', '*.html', '*.json', '*.swjson', '*.txt', '*.xml', '*.pwr']
             generated_files = []
             
             search_dirs = [work_dir, work_dir.parent]
@@ -208,7 +210,22 @@ class SocWatchProcessor:
                 if search_dir.exists():
                     for pattern in patterns:
                         for file in search_dir.glob(pattern):
-                            if file.name.startswith(etl_base_name) and file.is_file():
+                            if not file.is_file():
+                                continue
+
+                            # Primary match: standard SocWatch outputs start with ETL base name.
+                            is_primary_match = file.name.startswith(etl_base_name)
+
+                            # VTune fallback: some .pwr names may not preserve ETL base prefix.
+                            # In that case, copy recently generated .pwr files from this run.
+                            is_vtune_recent_pwr = (
+                                export_format == 'vtune' and
+                                file.suffix.lower() == '.pwr' and
+                                process_start_time is not None and
+                                file.stat().st_mtime >= (process_start_time - 2.0)
+                            )
+
+                            if is_primary_match or is_vtune_recent_pwr:
                                 if file not in generated_files:
                                     generated_files.append(file)
             
@@ -718,9 +735,11 @@ class SocWatchProcessor:
             "-o", str(paths.work_dir)
         ]
         
-        # Add -m and -r flags if export format is specified
-        if self.export_format:
-            cmd.extend(["-m", "-r", self.export_format])
+        # Add export flags based on requested format
+        if self.export_format == 'json':
+            cmd.extend(["-m", "-r", "json"])
+        elif self.export_format == 'vtune':
+            cmd.extend(["-m", "-r", "vtune"])
         
         # Add slice range parameter if specified
         if slice_range:
@@ -744,8 +763,10 @@ class SocWatchProcessor:
         print(f"      {self.selected_version}")
         print(f"      -i {etl_base_name}")
         print(f"      -o {paths.work_dir}")
-        if self.export_format:
-            print(f"      -m -r {self.export_format} (export .swjson with extra details)")
+        if self.export_format == 'json':
+            print(f"      -m -r json (export .swjson with extra details)")
+        elif self.export_format == 'vtune':
+            print(f"      -m -r vtune (export .pwr for VTune import)")
         if slice_range:
             print(f"      --result-slice-range {slice_range[0]},{slice_range[1]}")
         
@@ -759,6 +780,9 @@ class SocWatchProcessor:
             # Change to the collection directory where .etl files are located
             original_cwd = os.getcwd()
             os.chdir(collection_dir)
+
+            # Capture start time so copy-back can identify files from this run.
+            process_start_time = time.time()
             
             # Run socwatch.exe with extended timeout and real-time output logging
             print(f"   🚀 Starting SocWatch processing (may take several minutes for large files)...")
@@ -809,7 +833,13 @@ class SocWatchProcessor:
                 
                 # Copy files to final destination if needed
                 if paths.needs_copy:
-                    self._copy_results_to_final(paths.work_dir, paths.final_dir, etl_base_name)
+                    self._copy_results_to_final(
+                        paths.work_dir,
+                        paths.final_dir,
+                        etl_base_name,
+                        export_format=self.export_format,
+                        process_start_time=process_start_time
+                    )
                 
                 self.processed_files.append(collection)
                 return True
@@ -970,7 +1000,7 @@ def main():
             print("  --socwatch-dir <path>         Specify SocWatch directory or exe (skips version selection)")
             print("  -o, --output-dir <path>       Specify output directory (default: same as input)")
             print("  -f, --force                   Force reprocessing even if output already exists")
-            print("  -r <format>                   Export in specified format: 'json' for .swjson with extra details")
+            print("  -r <format>                   Export format: 'json' (.swjson) or 'vtune' (.pwr for VTune)")
             print("  --slice-range <start,end>     Time slice range in milliseconds (can be specified multiple times)")
             print("\nModes:")
             print("  python socwatch_pp.py                    # GUI mode - select folder with dialog")
@@ -984,6 +1014,7 @@ def main():
             print("  python socwatch_pp.py --output-dir D:\\results C:\\data  # Save results to local directory")
             print("  python socwatch_pp.py --socwatch-dir C:\\socwatch\\2025.5.0 C:\\data  # Skip version selection")
             print("  python socwatch_pp.py -r json C:\\data               # Export .swjson format")
+            print("  python socwatch_pp.py -r vtune C:\\data              # Export .pwr format for VTune")
             print("  python socwatch_pp.py --slice-range 1000,15000 C:\\data  # Process with time slice")
             print("  python socwatch_pp.py --slice-range 1000,5000 --slice-range 10000,15000 C:\\data  # Multiple slices")
             print("\nNetwork Paths:")
@@ -1018,14 +1049,17 @@ def main():
         
         elif arg == '-r':
             if i + 1 >= len(args):
-                print("❌ -r requires a value (e.g., 'json')")
+                print("❌ -r requires a value (e.g., 'json' or 'vtune')")
                 sys.exit(1)
             r_value = args[i + 1].lower()
             if r_value == 'json':
                 export_format = r_value
                 print(f"📊 .swjson export enabled (will use -m -r {r_value} flags)")
+            elif r_value == 'vtune':
+                export_format = r_value
+                print(f"📊 VTune export enabled (will use -m -r {r_value} to generate .pwr)")
             else:
-                print(f"❌ Invalid value for -r: '{args[i + 1]}'. Expected 'json'")
+                print(f"❌ Invalid value for -r: '{args[i + 1]}'. Expected 'json' or 'vtune'")
                 sys.exit(1)
             i += 1  # Skip next argument as it's the -r value
             

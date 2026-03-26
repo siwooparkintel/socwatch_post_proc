@@ -12,6 +12,7 @@ A simple Python tool for batch processing SocWatch .etl files using socwatch.exe
 - 🎯 **Automated processing** using file prefixes as input parameters
 - ⏱️ **Time slicing** - Process specific time ranges from traces (supports multiple slices per file)
 - 📊 **JSON Export** - Generate .swjson files with detailed trace data for advanced analysis
+- 🎖️ **VTune Export** - Generate .pwr files for import into Intel VTune Profiler
 - 📈 **Comprehensive reporting** of processing results
 - ✅ **Simple single-file solution** - no external dependencies
 - 🛠️ **Flexible SocWatch location** - supports custom installation paths
@@ -81,7 +82,10 @@ python socwatch_pp.py -o D:\results C:\data\traces
 python socwatch_pp.py --output-dir D:\results C:\data\traces
 
 # Export .swjson format with extra details
-python socwatch_pp.py -r C:\data\traces
+python socwatch_pp.py -r json C:\data\traces
+
+# Export .pwr format for VTune import
+python socwatch_pp.py -r vtune C:\data\traces
 
 # Process with time slice (1000ms to 15000ms)
 python socwatch_pp.py --slice-range 1000,15000 C:\data\traces
@@ -91,7 +95,10 @@ python socwatch_pp.py --slice-range 1000,5000 --slice-range 10000,15000 C:\data\
 python socwatch_pp.py --slice-range 0,10000 --slice-range 20000,30000 --slice-range 40000,50000 C:\data\traces
 
 # Combine options (CLI mode with custom SocWatch directory, output, slicing, and JSON export)
-python socwatch_pp.py --cli --socwatch-dir C:\Intel\SocWatch -o D:\results -r --slice-range 1000,15000 C:\data\traces
+python socwatch_pp.py --cli --socwatch-dir C:\Intel\SocWatch -o D:\results -r json --slice-range 1000,15000 C:\data\traces
+
+# Export to VTune with custom output directory
+python socwatch_pp.py -r vtune -o D:\results C:\data\traces
 
 # Show help
 python socwatch_pp.py --help
@@ -120,12 +127,16 @@ python socwatch_pp.py --slice-range 5000,15000 --slice-range 30000,40000 C:\data
 # This generates: workload_slice_5000-15000ms.csv and workload_slice_30000-40000ms.csv
 ```
 
-## JSON Export Feature
+## Export Formats
 
-The `-r` option enables export of trace data in `.swjson` format with enhanced details:
+The `-r` option enables export of trace data in different formats with enhanced details:
 
-- **Format**: `-r` (no additional arguments needed)
-- **SocWatch Flags**: Automatically passes `-m` (detailed metrics) and `-r` (JSON report) to socwatch.exe
+### JSON Export (`-r json`)
+
+Export trace data in `.swjson` format with enhanced details:
+
+- **Format**: `-r json`
+- **SocWatch Flags**: Automatically passes `-m` (detailed metrics) and `-r json` to socwatch.exe
 - **Output**: Generates `.swjson` files alongside standard CSV reports
 - **Use Cases**:
   - Advanced data analysis with custom tools
@@ -136,13 +147,13 @@ The `-r` option enables export of trace data in `.swjson` format with enhanced d
 **Example Usage:**
 ```bash
 # Export trace data in .swjson format
-python socwatch_pp.py -r C:\data\traces
+python socwatch_pp.py -r json C:\data\traces
 
 # Combine with time slicing
-python socwatch_pp.py -r --slice-range 1000,15000 C:\data\traces
+python socwatch_pp.py -r json --slice-range 1000,15000 C:\data\traces
 
 # Full workflow: export JSON, slice time range, and save to custom location
-python socwatch_pp.py -r --slice-range 5000,15000 -o D:\results C:\data\traces
+python socwatch_pp.py -r json --slice-range 5000,15000 -o D:\results C:\data\traces
 ```
 
 **What gets generated:**
@@ -152,6 +163,48 @@ python socwatch_pp.py -r --slice-range 5000,15000 -o D:\results C:\data\traces
 - Enhanced metrics enabled by the `-m` flag
 
 **Note:** The `.swjson` files can be analyzed using the `swjson_parser.py` tool in the `parsing-suite` folder for event visualization and metrics extraction.
+
+### VTune Export (`-r vtune`)
+
+Export trace data in `.pwr` format for import into Intel VTune Profiler:
+
+- **Format**: `-r vtune`
+- **SocWatch Flags**: Automatically passes `-m` (detailed metrics) and `-r vtune` to socwatch.exe
+- **Output**: Generates `.pwr` files alongside standard CSV reports
+- **Automatic Copy-back**: `.pwr` files are automatically copied from local temp to final destination (including network shares)
+- **Use Cases**:
+  - Import SocWatch traces into VTune Profiler for visualization
+  - Advanced performance analysis with VTune tools
+  - Cross-tool correlation of performance data
+  - Integration with VTune-based analysis workflows
+
+**Example Usage:**
+```bash
+# Export trace data for VTune import
+python socwatch_pp.py -r vtune C:\data\traces
+
+# Export VTune format with custom output location
+python socwatch_pp.py -r vtune -o D:\results C:\data\traces
+
+# Export from network share to local VTune results directory
+python socwatch_pp.py -r vtune -o D:\vtune_results \\10.54.63.126\Pnpext\SocWatch\traces
+
+# Combine with time slicing for VTune analysis
+python socwatch_pp.py -r vtune --slice-range 1000,15000 C:\data\traces
+```
+
+**What gets generated:**
+- Standard CSV reports (as usual)
+- `.pwr` files ready for VTune import
+- Network copy-back automatic (results copied from local temp to network source folder)
+- Enhanced metrics enabled by the `-m` flag
+
+**Network Processing with VTune:**
+When processing files from a network share with `-r vtune`:
+1. Files are temporarily processed on the local machine
+2. Generated `.pwr` files are automatically copied back to the network source folder
+3. No manual file transfers needed - completely transparent
+4. Perfect for batch processing remote traces
 
 ## How It Works
 
@@ -181,9 +234,10 @@ python socwatch_pp.py -r --slice-range 5000,15000 -o D:\results C:\data\traces
    - Extracts the file prefix (filename without .etl extension)
    - Skips if already processed (summary or wakeup analysis files exist)
    - Runs: `socwatch.exe -i <prefix> -o <output_folder>`
-   - With `-r` flag: `socwatch.exe -i <prefix> -o <output_folder> -m -r` (exports .swjson)
+   - With `-r json` flag: `socwatch.exe -i <prefix> -o <output_folder> -m -r json` (exports .swjson)
+   - With `-r vtune` flag: `socwatch.exe -i <prefix> -o <output_folder> -m -r vtune` (exports .pwr)
    - Changes to the file's directory before processing
-   - For network paths: copies results from temp to final location
+   - For network paths: copies results (including .pwr files) from temp to final location
 
 7. **Clean Output**: 
    - Results are saved directly alongside input files (no subdirectories created)
